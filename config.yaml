@@ -1,0 +1,44 @@
+project:
+  name: transit-delay-propagation
+  timezone_internal: UTC
+  timezone_presentation: Europe/Berlin
+
+collector:
+  primary_feed_url_env: GTFSRT_PRIMARY_URL
+  secondary_feed_url_env: GTFSRT_SECONDARY_URL
+  poll_interval_seconds: 30
+  rt_lake_dir: data/rt
+  log_file: logs/collector.log
+  request_timeout_seconds: 15
+
+static_feed:
+  index_url: https://gtfs.de/en/feeds/
+  feed_name_hint: de_full
+  archive_dir: data/static
+  fetch_interval_days: 7
+
+weather:
+  archive_url_env: OPEN_METEO_ARCHIVE_URL
+  forecast_url_env: OPEN_METEO_FORECAST_URL
+  grid_resolution_degrees: 0.25
+  variables:
+    - precipitation
+    - temperature_2m
+    - wind_speed_10m
+    - wind_gusts_10m
+    - snowfall
+
+calendar:
+  country: DE
+  subdivision: NI
+  school_holidays_file: data/static/school_holidays_ni.json
+
+features:
+  network_window_minutes: 15
+  hub_upcoming_window_minutes: 5
+  transfer_radius_meters: 300
+
+models:
+  horizon_buckets_minutes: [5, 15, 30, 60]
+  delay_exceed_threshold_minutes: 6
+  random_seed: 42

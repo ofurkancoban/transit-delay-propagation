@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.transitdelay.collector</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/ofurkancoban/Desktop/Data Projects/Transit_Delay_Propagation/scripts/run_collector.sh</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>/Users/ofurkancoban/Desktop/Data Projects/Transit_Delay_Propagation</string>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>/Users/ofurkancoban/Desktop/Data Projects/Transit_Delay_Propagation/logs/collector.stdout.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/ofurkancoban/Desktop/Data Projects/Transit_Delay_Propagation/logs/collector.stderr.log</string>
+</dict>
+</plist>

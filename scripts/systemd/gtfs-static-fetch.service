@@ -1,0 +1,10 @@
+[Unit]
+Description=Weekly static GTFS feed fetch for transit-delay-propagation
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=collector
+WorkingDirectory=/opt/transit-delay-propagation
+ExecStart=/opt/transit-delay-propagation/.venv/bin/python -m src.collect.static_gtfs_fetch

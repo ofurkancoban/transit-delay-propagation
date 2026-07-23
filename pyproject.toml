@@ -1,0 +1,32 @@
+[project]
+name = "transit-delay-propagation"
+version = "0.1.0"
+description = "Delay propagation, prediction and spillover estimation on the German public transport network"
+requires-python = ">=3.11"
+dependencies = [
+    "gtfs-realtime-bindings",
+    "requests",
+    "pyarrow",
+    "duckdb",
+    "polars",
+    "pyyaml",
+    "python-dotenv",
+    "holidays",
+    "lightgbm",
+    "scikit-learn",
+    "torch",
+    "torch-geometric",
+    "libpysal",
+    "spreg",
+    "statsmodels",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

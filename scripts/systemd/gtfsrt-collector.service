@@ -1,0 +1,17 @@
+[Unit]
+Description=GTFS-Realtime collector for transit-delay-propagation
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=collector
+WorkingDirectory=/opt/transit-delay-propagation
+ExecStart=/opt/transit-delay-propagation/scripts/run_collector.sh
+Restart=always
+RestartSec=10
+StandardOutput=append:/opt/transit-delay-propagation/logs/collector.stdout.log
+StandardError=append:/opt/transit-delay-propagation/logs/collector.stderr.log
+
+[Install]
+WantedBy=multi-user.target
