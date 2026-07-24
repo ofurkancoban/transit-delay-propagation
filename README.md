@@ -24,9 +24,13 @@ on the increment.
 
 ## Status
 
-Phase 1 (collection) is running. Nothing downstream can be validated until
-enough realtime data has accumulated, since the feed exposes only the
-present state and there is no historical archive.
+Phase 1 (collection) is running under systemd on a VPS with `Restart=always`
+and accumulating data continuously. Phase 2's static-side work
+(`src/build/schedule.py`) is implemented and runs against the archived
+static feed; it does not depend on realtime data accruing. The realisation
+panel (`src/build/realisation.py`), which does need accumulated snapshots,
+and all modelling work wait until enough realtime history exists, since the
+feed exposes only the present state and there is no historical archive.
 
 ## Repository layout
 
@@ -67,6 +71,22 @@ free gtfs.de feeds are valid for about 7 days.
    is quantified, not silently absorbed.
 4. `vehicle_id` can be unstable or absent per agency; the vehicle-chain
    channel is only estimated on the subset with stable identifiers.
+   **Measured on the primary feed (`realtime.gtfs.de`): `vehicle.id` is never
+   populated (0 of 134,795 trips observed as of 2026-07-23, confirmed against
+   the raw protobuf, not a collector bug).** The vehicle-chain / block
+   propagation channel is not estimable from this feed, and is dropped from
+   the edge-type ablation unless the secondary VBB feed turns out to carry it
+   and passes its own completeness check.
+
+   Direction is equally unavailable from either source: the static feed's
+   `trips.txt` omits `direction_id` and `block_id` entirely (header is just
+   `route_id,service_id,trip_id`), and the RT feed's `TripDescriptor.direction_id`
+   is present as a column but is always `-1` (the GTFS-RT "unset" sentinel,
+   confirmed across 16.3M rows). "Same route and direction" network features
+   therefore reduce to "same route" (joined via `trip_id` against the static
+   `trips.txt`, since RT's own `route_id` field is always empty and cannot be
+   used directly) unless direction is inferred from stop sequence or
+   origin/destination stop.
 5. Cancelled and added trips are handled via `schedule_relationship`, never
    treated as infinitely delayed trips.
 6. Collector downtime windows are logged and excluded from the realisation
