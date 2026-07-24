@@ -136,6 +136,30 @@ served the updated file within seconds.
 
 Live dashboard: https://ofurkancoban.github.io/transit-delay-propagation/
 
+**Phase 5 (econometrics) is complete.** `src/econ/weights.py` builds
+row-standardised spatial weight matrices from the same stop-level graph
+used for the Phase 4 GNN ablation (`sched_adj`, `shared_segment`,
+`transfer`, and a combined matrix; `block` remains unbuildable since
+`vehicle_id` is never populated). `src/econ/sdm.py` fits a Spatial Durbin
+Model (`spreg.ML_LagFE`, `slx_lags=1`, stop fixed effects) on a balanced
+1,500-stop x 24-hour delay panel, reports LM tests for spatial lag vs.
+error dependence (LM-error is significant, p<0.02, across all three
+weight specs; LM-lag never is, a genuine finding) and LeSage-Pace
+direct/indirect/total effects. `src/econ/local_projection.py` estimates
+a 25-point Jorda local projection (0-120 min in 5-minute steps, HAC
+standard errors) of the impulse response of network-wide delay to a
+nationwide precipitation shock, with a computed half-life of ~85
+minutes. All three modules ran against real pipeline data (not
+placeholders), with two real engineering fixes along the way: 89
+self-loop edges in the stop graph were dropped (a genuine data-quality
+bug, not present in the Phase 4 ablation since it only affects
+diagonal-sensitive spatial-weight code), and a spreg version bug
+(`check_constant` indexing past a short variable-name list against a
+wide panel matrix) was worked around with a documented, narrowly-scoped
+monkeypatch. Results, the effect decomposition table, the IRF plot with
+confidence bands, and a candid section on what is and is not identified
+from a single day of data are in `notebooks/04_econometrics.ipynb`.
+
 ## Repository layout
 
 See `config.yaml` for all tunable parameters (feed URLs, poll interval,
