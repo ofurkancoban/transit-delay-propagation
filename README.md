@@ -123,6 +123,17 @@ Written to a separate partitioned lake at
 `data/rt_alerts/date=YYYY-MM-DD/hour=HH/`, with unit tests in
 `tests/test_gtfsrt_collector.py`.
 
+**The live dashboard now actually updates itself.** `.github/workflows/refresh-dashboard.yml`
+runs every 10 minutes, connects to the VPS collector over a dedicated,
+restricted SSH key (forced to run only `scripts/vps_stats.py`, read-only,
+no shell, no port forwarding), and commits fresh numbers to
+`docs/stats.json`. The dashboard page fetches that file client-side every
+60 seconds and updates the status badge, collector uptime, and live
+row/alert counts, falling back to "stats unavailable" rather than
+breaking if the feed is stale. Verified end to end: a manual workflow run
+produced a real commit with fresh collector numbers, and GitHub Pages
+served the updated file within seconds.
+
 Live dashboard: https://ofurkancoban.github.io/transit-delay-propagation/
 
 ## Repository layout
