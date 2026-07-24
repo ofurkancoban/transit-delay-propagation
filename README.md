@@ -103,6 +103,26 @@ calmer 94% of rows (still warming up on a single day) but cannot close
 the volatile-event gap, which is a hard ceiling of `realtime.gtfs.de`
 itself, not something more tuning or feature engineering can reach.
 
+**ServiceAlerts are now collected too** (`src/collect/gtfsrt_collector.py`,
+deployed live to the VPS collector at 2026-07-24 21:54 CEST, confirmed
+running: first poll wrote 34,960 alert rows, the very next poll 30s later
+wrote only 439, confirming delta compression is working in production).
+Each alert is flattened to one row per informed entity and delta-compressed
+by `alert_id` (most alerts are long-lived, e.g. a multi-week construction
+notice, so without this the ~35-38k-entity alert list would be rewritten
+in full on every 30s poll). The live pull showed the alert stream is a mix
+of boilerplate per-trip attribution notices (cause/effect both
+`UNKNOWN`) and genuine disruption alerts (`CONSTRUCTION`,
+`TECHNICAL_PROBLEM`, `POLICE_ACTIVITY`, `MEDICAL_EMERGENCY`, route
+diversions) with real `header_text`/`description_text` and route/stop
+targeting, so it is a real candidate signal for the volatile-delay blind
+spot identified above. Not yet tested against the model, since it only
+starts accruing history from the deployment time forward and the existing
+Phase 2-4 pipeline was built on 2026-07-23's window, before this existed.
+Written to a separate partitioned lake at
+`data/rt_alerts/date=YYYY-MM-DD/hour=HH/`, with unit tests in
+`tests/test_gtfsrt_collector.py`.
+
 Live dashboard: https://ofurkancoban.github.io/transit-delay-propagation/
 
 ## Repository layout

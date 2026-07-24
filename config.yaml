@@ -8,6 +8,7 @@ collector:
   secondary_feed_url_env: GTFSRT_SECONDARY_URL
   poll_interval_seconds: 30
   rt_lake_dir: data/rt
+  alerts_lake_dir: data/rt_alerts
   log_file: logs/collector.log
   request_timeout_seconds: 15
 

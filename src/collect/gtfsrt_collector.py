@@ -5,6 +5,19 @@ from TripUpdates, keeps only rows whose delay values changed since the previous
 poll for the same (trip_id, stop_sequence), and appends the result to a
 partitioned Parquet lake at data/rt/date=YYYY-MM-DD/hour=HH/.
 
+Also extracts ServiceAlerts (added after a Phase 4 diagnosis found that
+LightGBM's error concentrates almost entirely in a small "volatile" regime
+where a delay is actively changing and the primary feed's TripUpdates alone
+carry no advance warning of it; a live pull of the feed confirmed it has no
+VehiclePosition data either, so ServiceAlerts is the one other entity type
+on this feed worth exploiting). Each alert can inform multiple entities
+(route/stop/trip); rows are flattened to one row per (alert, informed
+entity) pair. Delta-compressed the same way as TripUpdates, keyed by
+alert_id: most alerts are long-lived (a route closure lasting hours), so
+without delta compression the same ~50k-entity alert list would be
+rewritten in full on every 30s poll. Written to a separate partitioned
+Parquet lake at data/rt_alerts/date=YYYY-MM-DD/hour=HH/.
+
 Run as a script:
     python -m src.collect.gtfsrt_collector --feed primary
 """
@@ -69,6 +82,25 @@ ROW_SCHEMA = pa.schema(
     ]
 )
 
+ALERT_ROW_SCHEMA = pa.schema(
+    [
+        ("poll_ts", pa.timestamp("s", tz="UTC")),
+        ("feed_header_ts", pa.timestamp("s", tz="UTC")),
+        ("alert_id", pa.string()),
+        ("cause", pa.string()),
+        ("effect", pa.string()),
+        ("active_period_start", pa.timestamp("s", tz="UTC")),
+        ("active_period_end", pa.timestamp("s", tz="UTC")),
+        ("informed_agency_id", pa.string()),
+        ("informed_route_id", pa.string()),
+        ("informed_route_type", pa.int32()),
+        ("informed_stop_id", pa.string()),
+        ("informed_trip_id", pa.string()),
+        ("header_text", pa.string()),
+        ("description_text", pa.string()),
+    ]
+)
+
 
 @dataclass
 class PollResult:
@@ -92,6 +124,24 @@ class DeltaCache:
         return True
 
 
+class AlertDeltaCache:
+    """Tracks the last written content hash per alert_id.
+
+    Most alerts are long-lived (a route closure lasting hours), so without
+    this the same alert would be rewritten in full on every poll.
+    """
+
+    def __init__(self) -> None:
+        self._state: dict[str, tuple] = {}
+
+    def changed(self, alert_id: str, value: tuple) -> bool:
+        prev = self._state.get(alert_id)
+        if prev == value:
+            return False
+        self._state[alert_id] = value
+        return True
+
+
 def fetch_feed(url: str, timeout: int) -> gtfs_realtime_pb2.FeedMessage:
     resp = requests.get(url, timeout=timeout)
     resp.raise_for_status()
@@ -101,7 +151,6 @@ def fetch_feed(url: str, timeout: int) -> gtfs_realtime_pb2.FeedMessage:
 
 
 def schedule_relationship_name(entity_relationship: int) -> str:
-    names = gtfs_realtime_pb2.TripDescriptor.ScheduleRelationship.keys()
     try:
         return gtfs_realtime_pb2.TripDescriptor.ScheduleRelationship.Name(entity_relationship)
     except ValueError:
@@ -209,12 +258,148 @@ def write_rows(rows: list[dict], rt_lake_dir: Path, poll_ts: int) -> None:
     pq.write_table(table, file_path, compression="zstd")
 
 
-def run(feed_url: str, rt_lake_dir: Path, poll_interval: int, timeout: int, logger: logging.Logger) -> None:
+def cause_name(cause: int) -> str:
+    try:
+        return gtfs_realtime_pb2.Alert.Cause.Name(cause)
+    except ValueError:
+        return "UNKNOWN_CAUSE"
+
+
+def effect_name(effect: int) -> str:
+    try:
+        return gtfs_realtime_pb2.Alert.Effect.Name(effect)
+    except ValueError:
+        return "UNKNOWN_EFFECT"
+
+
+def translated_text(translated_string, default: Optional[str] = None) -> Optional[str]:
+    if not translated_string.translation:
+        return default
+    for t in translated_string.translation:
+        if t.language in ("en", "de", ""):
+            return t.text
+    return translated_string.translation[0].text
+
+
+def extract_alert_rows(
+    feed: gtfs_realtime_pb2.FeedMessage, poll_ts: int, cache: AlertDeltaCache
+) -> tuple[list[dict], int]:
+    """Flatten each Alert to one row per informed entity. Delta-compressed by alert_id."""
+    rows: list[dict] = []
+    alerts_seen = 0
+    header_ts = feed.header.timestamp if feed.header.HasField("timestamp") else None
+
+    for entity in feed.entity:
+        if not entity.HasField("alert"):
+            continue
+        alerts_seen += 1
+        alert = entity.alert
+        alert_id = entity.id
+        cause = cause_name(alert.cause)
+        effect = effect_name(alert.effect)
+        header_text = translated_text(alert.header_text)
+        description_text = translated_text(alert.description_text)
+
+        active_period_start = None
+        active_period_end = None
+        if alert.active_period:
+            period = alert.active_period[0]
+            active_period_start = period.start if period.HasField("start") else None
+            active_period_end = period.end if period.HasField("end") else None
+
+        informed_entities = alert.informed_entity or [None]
+
+        value = (
+            cause,
+            effect,
+            active_period_start,
+            active_period_end,
+            header_text,
+            description_text,
+            tuple(
+                (ie.agency_id, ie.route_id, ie.route_type if ie.HasField("route_type") else None, ie.stop_id, ie.trip.trip_id)
+                for ie in alert.informed_entity
+            ),
+        )
+        if not cache.changed(alert_id, value):
+            continue
+
+        for ie in informed_entities:
+            rows.append(
+                {
+                    "poll_ts": poll_ts,
+                    "feed_header_ts": header_ts,
+                    "alert_id": alert_id,
+                    "cause": cause,
+                    "effect": effect,
+                    "active_period_start": active_period_start,
+                    "active_period_end": active_period_end,
+                    "informed_agency_id": ie.agency_id if ie else None,
+                    "informed_route_id": ie.route_id if ie and ie.route_id else None,
+                    "informed_route_type": ie.route_type if ie and ie.HasField("route_type") else None,
+                    "informed_stop_id": ie.stop_id if ie and ie.stop_id else None,
+                    "informed_trip_id": ie.trip.trip_id if ie and ie.trip.trip_id else None,
+                    "header_text": header_text,
+                    "description_text": description_text,
+                }
+            )
+
+    return rows, alerts_seen
+
+
+def write_alert_rows(rows: list[dict], alerts_lake_dir: Path, poll_ts: int) -> None:
+    if not rows:
+        return
+    import datetime
+
+    dt = datetime.datetime.fromtimestamp(poll_ts, tz=datetime.timezone.utc)
+    partition_dir = alerts_lake_dir / f"date={dt.strftime('%Y-%m-%d')}" / f"hour={dt.strftime('%H')}"
+    partition_dir.mkdir(parents=True, exist_ok=True)
+
+    columns = {name: [] for name in ALERT_ROW_SCHEMA.names}
+    for row in rows:
+        for name in ALERT_ROW_SCHEMA.names:
+            columns[name].append(row.get(name))
+
+    table = pa.table(
+        {
+            "poll_ts": pa.array(columns["poll_ts"], type=pa.int64()).cast(pa.timestamp("s", tz="UTC")),
+            "feed_header_ts": pa.array(columns["feed_header_ts"], type=pa.int64()).cast(pa.timestamp("s", tz="UTC")),
+            "alert_id": pa.array(columns["alert_id"], type=pa.string()),
+            "cause": pa.array(columns["cause"], type=pa.string()),
+            "effect": pa.array(columns["effect"], type=pa.string()),
+            "active_period_start": pa.array(columns["active_period_start"], type=pa.int64()).cast(pa.timestamp("s", tz="UTC")),
+            "active_period_end": pa.array(columns["active_period_end"], type=pa.int64()).cast(pa.timestamp("s", tz="UTC")),
+            "informed_agency_id": pa.array(columns["informed_agency_id"], type=pa.string()),
+            "informed_route_id": pa.array(columns["informed_route_id"], type=pa.string()),
+            "informed_route_type": pa.array(columns["informed_route_type"], type=pa.int32()),
+            "informed_stop_id": pa.array(columns["informed_stop_id"], type=pa.string()),
+            "informed_trip_id": pa.array(columns["informed_trip_id"], type=pa.string()),
+            "header_text": pa.array(columns["header_text"], type=pa.string()),
+            "description_text": pa.array(columns["description_text"], type=pa.string()),
+        }
+    )
+
+    file_path = partition_dir / f"poll_{poll_ts}.parquet"
+    pq.write_table(table, file_path, compression="zstd")
+
+
+def run(
+    feed_url: str,
+    rt_lake_dir: Path,
+    alerts_lake_dir: Path,
+    poll_interval: int,
+    timeout: int,
+    logger: logging.Logger,
+) -> None:
     cache = DeltaCache()
+    alert_cache = AlertDeltaCache()
     rt_lake_dir.mkdir(parents=True, exist_ok=True)
+    alerts_lake_dir.mkdir(parents=True, exist_ok=True)
     logger.info("collector started, feed=%s interval=%ss", feed_url, poll_interval)
 
     total_rows_written = 0
+    total_alert_rows_written = 0
     poll_count = 0
     fail_count = 0
 
@@ -225,18 +410,25 @@ def run(feed_url: str, rt_lake_dir: Path, poll_interval: int, timeout: int, logg
             feed = fetch_feed(feed_url, timeout)
             rows, seen, missing_seq = extract_rows(feed, poll_ts, cache)
             write_rows(rows, rt_lake_dir, poll_ts)
+            alert_rows, alerts_seen = extract_alert_rows(feed, poll_ts, alert_cache)
+            write_alert_rows(alert_rows, alerts_lake_dir, poll_ts)
             poll_count += 1
             total_rows_written += len(rows)
+            total_alert_rows_written += len(alert_rows)
             header_ts = feed.header.timestamp if feed.header.HasField("timestamp") else None
             lag = (poll_ts - header_ts) if header_ts else None
             logger.info(
-                "poll=%d seen=%d written=%d missing_stop_sequence=%d lag_s=%s total_written=%d",
+                "poll=%d seen=%d written=%d missing_stop_sequence=%d lag_s=%s total_written=%d "
+                "alerts_seen=%d alert_rows_written=%d alert_rows_total=%d",
                 poll_count,
                 seen,
                 len(rows),
                 missing_seq,
                 lag,
                 total_rows_written,
+                alerts_seen,
+                len(alert_rows),
+                total_alert_rows_written,
             )
         except Exception as exc:
             fail_count += 1
@@ -265,8 +457,10 @@ def main() -> None:
         raise SystemExit(f"environment variable {url_env} is not set")
 
     rt_lake_dir = REPO_ROOT / config["collector"]["rt_lake_dir"]
+    alerts_lake_dir = REPO_ROOT / config["collector"].get("alerts_lake_dir", "data/rt_alerts")
     if args.feed == "secondary":
         rt_lake_dir = rt_lake_dir.parent / "rt_secondary"
+        alerts_lake_dir = alerts_lake_dir.parent / "rt_alerts_secondary"
 
     log_file = REPO_ROOT / config["collector"]["log_file"]
     if args.feed == "secondary":
@@ -276,6 +470,7 @@ def main() -> None:
     run(
         feed_url=feed_url,
         rt_lake_dir=rt_lake_dir,
+        alerts_lake_dir=alerts_lake_dir,
         poll_interval=config["collector"]["poll_interval_seconds"],
         timeout=config["collector"]["request_timeout_seconds"],
         logger=logger,
