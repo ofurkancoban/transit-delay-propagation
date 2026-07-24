@@ -24,13 +24,17 @@ on the increment.
 
 ## Status
 
-Phase 1 (collection) is running under systemd on a VPS with `Restart=always`
-and accumulating data continuously. Phase 2's static-side work
-(`src/build/schedule.py`) is implemented and runs against the archived
-static feed; it does not depend on realtime data accruing. The realisation
-panel (`src/build/realisation.py`), which does need accumulated snapshots,
-and all modelling work wait until enough realtime history exists, since the
-feed exposes only the present state and there is no historical archive.
+**Phase 1 (collection) is complete.** The collector ran under systemd on a
+VPS with `Restart=always` for 24h 21m (2026-07-23 15:06 to 2026-07-24 15:36
+CEST) with zero process restarts and zero logged errors, producing 44.4M
+raw snapshot rows across 2,859 poll files. Two brief upstream feed-side
+stalls (6 and 10 minutes) were observed and excluded from the realisation
+panel per pitfall 6; neither involved the collector process going down.
+Phase 2's static-side work (`src/build/schedule.py`) and the realisation
+panel (`src/build/realisation.py`) are both implemented and have been run
+against the full collection window, producing `panel_predictions.parquet`
+(30.9M rows) and `panel_realised.parquet` (9.09M stop-events, 504,503
+distinct trips). Live dashboard: https://ofurkancoban.github.io/transit-delay-propagation/
 
 ## Repository layout
 

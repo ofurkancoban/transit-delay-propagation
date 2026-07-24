@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Transit Delay Propagation — Operations Dashboard</title>
+</head>
+<body>
+<title>Transit Delay Propagation — Operations Dashboard</title>
 <style>
   :root {
     color-scheme: light;
@@ -303,8 +306,6 @@
     padding-top: 10px;
   }
 </style>
-</head>
-<body>
 
 <div class="wrap">
 
@@ -312,38 +313,38 @@
     <div>
       <div class="eyebrow">Transit Delay Propagation &middot; Germany-wide GTFS-RT</div>
       <h1>Collection <span>operations</span> dashboard</h1>
-      <div class="top-meta">Snapshot as of <b>2026-07-24 09:52 CEST</b> &middot; window started <b>13:10 CEST</b>, target <b>24h</b> continuous run</div>
-      <div class="progress-track"><div class="progress-fill" style="width: 86.3%;"></div></div>
-      <div class="progress-label"><span>20h 42m collected</span><span>~3h 18m remaining to 24h acceptance mark</span></div>
+      <div class="top-meta">Snapshot as of <b>2026-07-24 15:36 CEST</b> &middot; window started <b>2026-07-23 15:06 CEST</b> &middot; <b>Phase 1 acceptance met</b></div>
+      <div class="progress-track"><div class="progress-fill" style="width: 100%;"></div></div>
+      <div class="progress-label"><span>24h 21m collected, zero collector restarts</span><span>24h acceptance mark reached</span></div>
     </div>
-    <span class="status-pill"><span class="status-dot"></span>Collector active &middot; systemd, Restart=always</span>
+    <span class="status-pill"><span class="status-dot"></span>Phase 1 complete &middot; systemd, Restart=always, 0 restarts</span>
   </header>
 
   <section class="stat-row">
     <div class="stat-tile">
       <div class="stat-label">Raw snapshot rows</div>
-      <div class="stat-value">40.1M</div>
-      <div class="stat-sub">across 21 hour-partitions so far</div>
+      <div class="stat-value">44.4M</div>
+      <div class="stat-sub">2,859 poll files, across the full 24h+ window</div>
     </div>
     <div class="stat-tile">
       <div class="stat-label">Distinct trips seen</div>
-      <div class="stat-value">418,630</div>
-      <div class="stat-sub">6.31M stop-events realised</div>
+      <div class="stat-value">504,503</div>
+      <div class="stat-sub">9.09M stop-events realised</div>
     </div>
     <div class="stat-tile">
       <div class="stat-label">Poll success rate</div>
-      <div class="stat-value">99.9%</div>
-      <div class="stat-sub">2,244 ok &middot; 3 failed &middot; 2,247 attempts</div>
+      <div class="stat-value">100%</div>
+      <div class="stat-sub">2,667 polls &middot; 0 collector errors &middot; 0 process restarts</div>
     </div>
     <div class="stat-tile">
       <div class="stat-label">Feed lag, p50</div>
-      <div class="stat-value">9s</div>
-      <div class="stat-sub">poll time minus feed header time</div>
+      <div class="stat-value">3s</div>
+      <div class="stat-sub">two upstream feed-side stalls (6 &amp; 10 min), no collector downtime</div>
     </div>
     <div class="stat-tile">
       <div class="stat-label">Delay &gt; 6 min</div>
-      <div class="stat-value">4.8%</div>
-      <div class="stat-sub">of 2.68M scored arrivals</div>
+      <div class="stat-value">3.7%</div>
+      <div class="stat-sub">of 9.09M scored arrivals, median delay 6s</div>
     </div>
   </section>
 
@@ -547,14 +548,15 @@
   <section class="callout">
     <h2>Feed limitations found so far</h2>
     <ul>
-      <li><b>vehicle_id is never populated</b> on the primary feed (0 of 16.8M rows, confirmed against the raw protobuf). The vehicle-chain / block propagation channel cannot be estimated from this source.</li>
+      <li><b>vehicle_id is never populated</b> on the primary feed (0 of 9.09M realised stop-events, confirmed against the raw protobuf). The vehicle-chain / block propagation channel cannot be estimated from this source.</li>
       <li><b>direction_id is always the GTFS-RT "unset" sentinel (-1)</b> in realtime, and the static <code>trips.txt</code> omits <code>direction_id</code>/<code>block_id</code> entirely. "Same route and direction" network features reduce to "same route" only, joined via <code>trip_id</code>.</li>
+      <li>Two brief upstream feed-side stalls (2026-07-23 16:05-16:11, 2026-07-24 09:42-09:52) inflated lag_s but never took the collector process down; excluded from the realisation panel per pitfall 6.</li>
       <li>Both findings are documented in <code>README.md</code> and will constrain the edge-type ablation in the eventual spatio-temporal GNN.</li>
     </ul>
   </section>
 
   <footer class="foot">
-    Data: realtime.gtfs.de (CC BY-SA 4.0) &middot; gtfs.de static feed, DELFI e.V. &middot; snapshot generated from the accumulating collection run, not final Phase 1 numbers
+    Data: realtime.gtfs.de (CC BY-SA 4.0) &middot; gtfs.de static feed, DELFI e.V. &middot; Phase 1 collection run complete, 2026-07-23 15:06 to 2026-07-24 15:36 CEST
   </footer>
 
 </div>
