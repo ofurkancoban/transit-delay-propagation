@@ -14,6 +14,7 @@ import argparse
 import logging
 import os
 import sys
+import time
 from pathlib import Path
 
 import polars as pl
@@ -57,30 +58,50 @@ def unique_grid_cells(stops: pl.DataFrame, resolution: float) -> pl.DataFrame:
     return cells
 
 
-def fetch_archive(url: str, lat: float, lon: float, start_date: str, end_date: str, variables: list[str], timeout: int = 30) -> dict:
+def request_with_retry(url: str, params: dict, timeout: int, max_retries: int = 5) -> dict | list:
+    """GET with exponential backoff on 429 (Open-Meteo's free tier rate limit)."""
+    delay = 5
+    for attempt in range(max_retries):
+        resp = requests.get(url, params=params, timeout=timeout)
+        if resp.status_code == 429 and attempt < max_retries - 1:
+            time.sleep(delay)
+            delay *= 2
+            continue
+        resp.raise_for_status()
+        return resp.json()
+    raise RuntimeError(f"exhausted retries against {url}")
+
+
+def fetch_archive_batch(
+    url: str, lats: list[float], lons: list[float], start_date: str, end_date: str, variables: list[str], timeout: int = 60
+) -> list[dict]:
+    """Fetch multiple grid cells in a single request using Open-Meteo's batched coordinate lists.
+
+    Open-Meteo accepts comma-separated latitude/longitude lists and returns a
+    JSON array (one object per coordinate pair) instead of a single object,
+    which cuts call volume by the batch size compared to one request per cell.
+    """
     params = {
-        "latitude": lat,
-        "longitude": lon,
+        "latitude": ",".join(str(v) for v in lats),
+        "longitude": ",".join(str(v) for v in lons),
         "start_date": start_date,
         "end_date": end_date,
         "hourly": ",".join(variables),
         "timezone": "UTC",
     }
-    resp = requests.get(url, params=params, timeout=timeout)
-    resp.raise_for_status()
-    return resp.json()
+    data = request_with_retry(url, params, timeout)
+    return data if isinstance(data, list) else [data]
 
 
-def fetch_forecast(url: str, lat: float, lon: float, variables: list[str], timeout: int = 30) -> dict:
+def fetch_forecast_batch(url: str, lats: list[float], lons: list[float], variables: list[str], timeout: int = 60) -> list[dict]:
     params = {
-        "latitude": lat,
-        "longitude": lon,
+        "latitude": ",".join(str(v) for v in lats),
+        "longitude": ",".join(str(v) for v in lons),
         "hourly": ",".join(variables),
         "timezone": "UTC",
     }
-    resp = requests.get(url, params=params, timeout=timeout)
-    resp.raise_for_status()
-    return resp.json()
+    data = request_with_retry(url, params, timeout)
+    return data if isinstance(data, list) else [data]
 
 
 def main() -> None:
@@ -119,23 +140,32 @@ def main() -> None:
     out_dir = REPO_ROOT / "data" / "interim" / "weather"
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    records = []
-    for row in cells.iter_rows(named=True):
-        lat, lon = row["grid_lat"], row["grid_lon"]
-        if args.mode == "archive":
-            if not args.start or not args.end:
-                raise SystemExit("--start and --end are required for archive mode")
-            data = fetch_archive(url, lat, lon, args.start, args.end, weather_cfg["variables"])
-        else:
-            data = fetch_forecast(url, lat, lon, weather_cfg["variables"])
+    if args.mode == "archive" and (not args.start or not args.end):
+        raise SystemExit("--start and --end are required for archive mode")
 
-        hourly = data.get("hourly", {})
-        times = hourly.get("time", [])
-        for i, ts in enumerate(times):
-            rec = {"grid_lat": lat, "grid_lon": lon, "time": ts}
-            for var in weather_cfg["variables"]:
-                rec[var] = hourly.get(var, [None] * len(times))[i]
-            records.append(rec)
+    batch_size = 100
+    cell_list = [(row["grid_lat"], row["grid_lon"]) for row in cells.iter_rows(named=True)]
+
+    records = []
+    for i in range(0, len(cell_list), batch_size):
+        batch = cell_list[i : i + batch_size]
+        lats = [c[0] for c in batch]
+        lons = [c[1] for c in batch]
+        if args.mode == "archive":
+            results = fetch_archive_batch(url, lats, lons, args.start, args.end, weather_cfg["variables"])
+        else:
+            results = fetch_forecast_batch(url, lats, lons, weather_cfg["variables"])
+
+        for (lat, lon), data in zip(batch, results):
+            hourly = data.get("hourly", {})
+            times = hourly.get("time", [])
+            for j, ts in enumerate(times):
+                rec = {"grid_lat": lat, "grid_lon": lon, "time": ts}
+                for var in weather_cfg["variables"]:
+                    rec[var] = hourly.get(var, [None] * len(times))[j]
+                records.append(rec)
+        logger.info("fetched batch %d-%d of %d grid cells", i, i + len(batch), len(cell_list))
+        time.sleep(2)
 
     if not records:
         logger.warning("no weather records fetched")

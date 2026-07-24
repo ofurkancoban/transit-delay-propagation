@@ -22,7 +22,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "ruff"]
+dev = ["pytest", "ruff", "jupyter", "nbformat", "matplotlib"]
 
 [tool.ruff]
 line-length = 110

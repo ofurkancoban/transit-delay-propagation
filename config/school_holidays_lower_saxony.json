@@ -1,0 +1,11 @@
+{
+  "_comment": "Lower Saxony (Niedersachsen) school holiday periods, inclusive date ranges. Sourced by hand from the official Kultusministerkonferenz (KMK) holiday calendar rather than a live API, per the project's working agreement. Update by hand each school year.",
+  "state": "Niedersachsen",
+  "periods": [
+    {"name": "Osterferien 2026", "start_date": "2026-03-30", "end_date": "2026-04-11"},
+    {"name": "Pfingsten 2026", "start_date": "2026-05-26", "end_date": "2026-05-26"},
+    {"name": "Sommerferien 2026", "start_date": "2026-07-16", "end_date": "2026-08-26"},
+    {"name": "Herbstferien 2026", "start_date": "2026-10-19", "end_date": "2026-10-31"},
+    {"name": "Weihnachtsferien 2026", "start_date": "2026-12-21", "end_date": "2027-01-06"}
+  ]
+}

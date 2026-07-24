@@ -38,8 +38,27 @@ and `panel_realised.parquet` (9.09M stop-events, 504,503 distinct trips).
 Row counts, delay distributions and prediction-horizon coverage are sanity
 checked in `notebooks/02_descriptives.ipynb`, which also verifies five
 real midnight-crossing trips (raw GTFS times of `24:00:00` and later) by
-hand against the resulting absolute timestamps. Live dashboard:
-https://ofurkancoban.github.io/transit-delay-propagation/
+hand against the resulting absolute timestamps.
+
+**Phase 3 (feature engineering) is complete.** `src/build/features.py`
+builds `data/processed/features.parquet` (7.74M rows) with the delay
+increment target (`y_delay_increment`, not the raw delay level) plus trip
+state, network state and exogenous feature blocks. The vehicle-chain block
+is skipped entirely since `vehicle_id` is never populated (pitfall 4).
+Network-state aggregates use DuckDB window frames that only look backward
+from each row's actual observed arrival time, and the upcoming-stop
+scheduling-pressure feature is computed purely from the static schedule,
+so neither carries realtime leakage; `tests/test_features.py` includes a
+structural leakage test plus unit tests for the school holiday calendar
+and the stop-pressure lookup. Weather (`src/collect/weather_fetch.py`,
+now batched to respect Open-Meteo's rate limit) and Lower Saxony school
+holidays (`config/school_holidays_lower_saxony.json`, hand-sourced per the
+working agreement) are both wired in as exogenous features. Feature
+distributions are documented in `notebooks/02_descriptives.ipynb`,
+including a note on a rare (<0.01% of rows) GTFS-RT producer quirk where a
+handful of TripUpdates report a delay offset by exactly 24 hours.
+
+Live dashboard: https://ofurkancoban.github.io/transit-delay-propagation/
 
 ## Repository layout
 
