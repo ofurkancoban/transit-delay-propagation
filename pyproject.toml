@@ -14,8 +14,11 @@ dependencies = [
     "holidays",
     "lightgbm",
     "scikit-learn",
+    "pandas",
     "torch",
-    "torch-geometric",
+    # torch-geometric intentionally not a dependency: src/models/stgnn.py
+    # implements its message passing directly with plain torch tensor ops
+    # instead, see that module's docstring for why.
     "libpysal",
     "spreg",
     "statsmodels",

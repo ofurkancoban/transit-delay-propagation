@@ -58,6 +58,32 @@ distributions are documented in `notebooks/02_descriptives.ipynb`,
 including a note on a rare (<0.01% of rows) GTFS-RT producer quirk where a
 handful of TripUpdates report a delay offset by exactly 24 hours.
 
+**Phase 4 (models) is complete.** All six tiers ran end to end on the
+time-ordered split (never random, `src/models/evaluate.py:time_based_split`):
+persistence and the operator's own live forecast (`src/models/baselines.py`),
+a historical-mean baseline, LightGBM (`src/models/lgbm.py`, `regression_l1`
+objective, not the L2 default, since a squared-error objective is badly
+distorted by the rare +/-86400s producer-quirk outliers), a small GRU over
+each trip's stop sequence (`src/models/sequence.py`), and a minimal
+spatio-temporal GNN (`src/models/stgnn.py`, hand-written message passing in
+plain PyTorch rather than `torch-geometric`, see that module's docstring).
+Results, the horizon-bucket comparison table, skill scores against the
+operator, PR-AUC for delay>6min, peak/mode/density breakdowns and the
+edge-type ablation (the headline experiment) are all in
+`notebooks/03_model_results.ipynb`.
+
+**Headline result, reported honestly:** no tier beats the operator's own
+live forecast yet (operator MAE 7.99s vs LightGBM's 10.31s, the best of
+this repo's own models on the full test split), though LightGBM and the
+STGNN both clearly beat the naive baselines. The ablation shows the
+longitudinal (`sched_adj`) channel dominates; the vehicle-chain (`block`)
+channel could not be built at all (`vehicle_id` is never populated,
+pitfall 4); transfer and shared-infrastructure channels show only a small
+effect at the current, deliberately subsampled graph coverage
+(`src/build/graph.py`, 30,000 of 264,933 nationwide stops). The single
+biggest lever for improving on all of this is more realtime history: a
+single day limits every historical/network-state feature's warm-up.
+
 Live dashboard: https://ofurkancoban.github.io/transit-delay-propagation/
 
 ## Repository layout
