@@ -311,8 +311,8 @@
 
   <header class="top">
     <div>
-      <div class="eyebrow">Transit Delay Propagation &middot; Germany-wide GTFS-RT</div>
-      <h1>Collection <span>operations</span> dashboard</h1>
+      <div class="eyebrow">Transit Delay Propagation &middot; Germany-wide GTFS-RT &middot; Phases 1&ndash;4</div>
+      <h1>Collection, modelling <span>&amp; live</span> operations dashboard</h1>
       <div class="top-meta" id="top-meta">Snapshot as of <b>2026-07-24 15:36 CEST</b> &middot; window started <b>2026-07-23 15:06 CEST</b> &middot; <b>Phase 1 acceptance met</b></div>
       <div class="progress-track"><div class="progress-fill" style="width: 100%;"></div></div>
       <div class="progress-label"><span>24h 21m collected, zero collector restarts</span><span id="live-refresh-label">24h acceptance mark reached</span></div>
@@ -545,18 +545,69 @@
 
   </section>
 
+  <section class="grid-2">
+
+    <div class="panel">
+      <div>
+        <h2>Model comparison</h2>
+        <div class="panel-desc">Test split (1,161,362 rows), delay increment target, never a random split &middot; skill = 1 &minus; MAE&#8320;&#7488;&#7480;&#7480;&#7473; / MAE&#8320;&#7473;&#7477;&#7479;&#7472;&#7481;&#7476;&#7479;</div>
+      </div>
+      <table>
+        <thead><tr><th>Model</th><th class="num">MAE (s)</th><th class="num">PR-AUC &gt;6min</th><th class="num">Skill vs operator</th></tr></thead>
+        <tbody>
+          <tr><td><span class="mode-dot" style="background:var(--good);"></span><b>Operator (benchmark)</b></td><td class="num">7.99</td><td class="num">0.950</td><td class="num">&mdash;</td></tr>
+          <tr><td><span class="mode-dot" style="background:var(--series-teal);"></span>LightGBM</td><td class="num">10.27</td><td class="num">0.916</td><td class="num delta-hi">&minus;28.5%</td></tr>
+          <tr><td><span class="mode-dot" style="background:var(--series-violet);"></span>STGNN</td><td class="num">10.87</td><td class="num">0.919</td><td class="num delta-hi">&minus;36.1%</td></tr>
+          <tr><td><span class="mode-dot" style="background:var(--text-muted);"></span>Persistence</td><td class="num">11.21</td><td class="num">0.909</td><td class="num delta-hi">&minus;40.4%</td></tr>
+          <tr><td><span class="mode-dot" style="background:var(--series-amber);"></span>GRU<sup>*</sup></td><td class="num">11.33</td><td class="num">0.903</td><td class="num delta-hi">&minus;41.9%</td></tr>
+          <tr><td><span class="mode-dot" style="background:var(--series-rose);"></span>Historical mean</td><td class="num">14.12</td><td class="num">0.909</td><td class="num delta-hi">&minus;76.8%</td></tr>
+        </tbody>
+      </table>
+      <div class="panel-desc" style="margin-top:-6px;">* GRU scored on a sampled 117,986-row subset (per-trip Python sequence building doesn't scale to the full split in one CPU session), not the full test set the other tiers use.</div>
+    </div>
+
+    <div class="panel">
+      <div>
+        <h2>Edge-type ablation</h2>
+        <div class="panel-desc">STGNN validation MAE with each propagation channel zeroed out &middot; the headline experiment</div>
+      </div>
+      <table>
+        <thead><tr><th>Configuration</th><th class="num">Val MAE</th><th class="num">&Delta; vs full graph</th></tr></thead>
+        <tbody>
+          <tr><td><b>Full graph</b></td><td class="num">19.295</td><td class="num">&mdash;</td></tr>
+          <tr><td>without transfer</td><td class="num">19.295</td><td class="num">+0.000</td></tr>
+          <tr><td>without shared_segment</td><td class="num">19.310</td><td class="num">+0.015</td></tr>
+          <tr><td>no graph (all removed)</td><td class="num">19.344</td><td class="num">+0.049</td></tr>
+          <tr><td class="delta-hi"><b>without sched_adj</b></td><td class="num delta-hi"><b>19.355</b></td><td class="num delta-hi"><b>+0.059</b></td></tr>
+        </tbody>
+      </table>
+      <div class="panel-desc" style="margin-top:-6px;">Longitudinal propagation (<code>sched_adj</code>, same trip) dominates. <code>block</code> (vehicle chain) is entirely absent, not just zeroed: <code>vehicle_id</code> is never populated. Transfer/shared-infrastructure show only a small effect at the current 30k-of-264,933-stop graph coverage.</div>
+    </div>
+
+  </section>
+
+  <section class="callout">
+    <h2>Diagnosis: why no model beats the operator yet</h2>
+    <ul>
+      <li>Re-slicing the test split by <b>how fresh the operator's own prediction was</b> shows LightGBM already <b>matches or beats the operator</b> outside a narrow "volatile" regime (delay actively changing right now, 2.2% of rows). The entire aggregate gap concentrates there: LightGBM's error is <b>&gt;10x</b> the operator's in that slice alone.</li>
+      <li>Five volatility features engineered from existing TripUpdates history (<code>delay_jump_1</code>, <code>delay_recent_std</code>, <code>delay_vs_route_recent_gap</code>, etc.) were tried and adopted &mdash; a real ~0.5% overall improvement, but only ~0.1% on the volatile regime specifically, confirming the gap there is structural, not a tuning shortfall.</li>
+      <li>A live pull of the primary feed confirmed <b>zero</b> <code>VehiclePosition</code> entities are published, so whatever lets the operator react instantly is internal to the agency's own systems and not exposed here.</li>
+      <li><b>ServiceAlerts collection went live 2026-07-24 21:54 CEST</b> as the next candidate signal (real disruption alerts &mdash; construction, technical problems, police activity &mdash; mixed with boilerplate attribution notices), delta-compressed by <code>alert_id</code>. Not yet tested against the model: history only starts accruing from deployment time forward.</li>
+    </ul>
+  </section>
+
   <section class="callout">
     <h2>Feed limitations found so far</h2>
     <ul>
       <li><b>vehicle_id is never populated</b> on the primary feed (0 of 9.09M realised stop-events, confirmed against the raw protobuf). The vehicle-chain / block propagation channel cannot be estimated from this source.</li>
       <li><b>direction_id is always the GTFS-RT "unset" sentinel (-1)</b> in realtime, and the static <code>trips.txt</code> omits <code>direction_id</code>/<code>block_id</code> entirely. "Same route and direction" network features reduce to "same route" only, joined via <code>trip_id</code>.</li>
       <li>Two brief upstream feed-side stalls (2026-07-23 16:05-16:11, 2026-07-24 09:42-09:52) inflated lag_s but never took the collector process down; excluded from the realisation panel per pitfall 6.</li>
-      <li>Both findings are documented in <code>README.md</code> and will constrain the edge-type ablation in the eventual spatio-temporal GNN.</li>
+      <li>Both findings are documented in <code>README.md</code> and constrained the edge-type ablation above.</li>
     </ul>
   </section>
 
   <footer class="foot">
-    Data: realtime.gtfs.de (CC BY-SA 4.0) &middot; gtfs.de static feed, DELFI e.V. &middot; Phase 1 collection run complete, 2026-07-23 15:06 to 2026-07-24 15:36 CEST
+    Data: realtime.gtfs.de (CC BY-SA 4.0) &middot; gtfs.de static feed, DELFI e.V. &middot; Phases 1&ndash;4 complete, collection ongoing &middot; page auto-refreshes live collector stats every 60s
   </footer>
 
 </div>
