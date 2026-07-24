@@ -80,9 +80,21 @@ longitudinal (`sched_adj`) channel dominates; the vehicle-chain (`block`)
 channel could not be built at all (`vehicle_id` is never populated,
 pitfall 4); transfer and shared-infrastructure channels show only a small
 effect at the current, deliberately subsampled graph coverage
-(`src/build/graph.py`, 30,000 of 264,933 nationwide stops). The single
-biggest lever for improving on all of this is more realtime history: a
-single day limits every historical/network-state feature's warm-up.
+(`src/build/graph.py`, 30,000 of 264,933 nationwide stops).
+
+**Diagnosis (added after re-slicing the test split by how fresh the
+operator's own prediction was, see `notebooks/03_model_results.ipynb`):**
+the operator-gap is not primarily a tuning or data-volume problem. Outside
+rows where the operator's prediction had just changed in the last minute
+("volatile" delay events, 2.2% of the test split), LightGBM already
+matches or beats the operator. The entire aggregate gap concentrates in
+that 2.2%, where LightGBM's error is over 10x the operator's. A live pull
+of the primary feed confirms it publishes **zero** `VehiclePosition`
+entities (only TripUpdate and Alert), so whatever lets the operator track
+a delay the instant it starts is not exposed on this feed at all; more
+collection days would help the calmer 94% of rows (still warming up on a
+single day) but cannot close the volatile-event gap, which is a hard
+ceiling of `realtime.gtfs.de` itself, not a modelling shortfall.
 
 Live dashboard: https://ofurkancoban.github.io/transit-delay-propagation/
 
