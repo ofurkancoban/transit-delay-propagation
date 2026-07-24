@@ -673,6 +673,57 @@
 
   </section>
 
+  <section class="grid-2">
+
+    <div class="panel">
+      <div>
+        <h2>ServiceAlerts, live sample</h2>
+        <div class="panel-desc">Cause breakdown from the accruing alert lake &middot; most rows are boilerplate attribution, not incidents</div>
+      </div>
+      <div class="coverage-row">
+        <div class="coverage-head"><span>Attribution notices (UNKNOWN_CAUSE)</span><b>45,071</b></div>
+        <div class="coverage-bar"><div class="coverage-fill" style="width:99.4%; background: var(--text-muted);"></div></div>
+        <div class="coverage-head"><span>Real disruptions (technical, construction, medical, police, other)</span><b>246</b></div>
+        <div class="coverage-bar"><div class="coverage-fill" style="width:0.6%; background: var(--serious);"></div></div>
+      </div>
+      <div class="panel-desc" style="margin-top:2px;">Real disruption examples pulled from the live feed (German originals):</div>
+      <table>
+        <tbody>
+          <tr><td>Reparatur an einem Signal <span style="color:var(--text-muted);">(technical)</span></td></tr>
+          <tr><td>Stau / Hohes Verkehrsaufkommen <span style="color:var(--text-muted);">(traffic)</span></td></tr>
+          <tr><td>Defektes Stellwerk <span style="color:var(--text-muted);">(technical)</span></td></tr>
+          <tr><td>Kurzfristige Erkrankung von Personal <span style="color:var(--text-muted);">(medical)</span></td></tr>
+          <tr><td>Tiere auf der Strecke <span style="color:var(--text-muted);">(other)</span></td></tr>
+        </tbody>
+      </table>
+      <div class="panel-desc" style="margin-top:-6px;">These read like exactly the kind of precursor signal the volatile-delay diagnosis needs, but there isn't enough history yet to test it against the model &mdash; collection only started 2026-07-24 21:54 CEST.</div>
+    </div>
+
+    <div class="panel">
+      <div>
+        <h2>Project roadmap</h2>
+        <div class="panel-desc">Where this repository stands against <code>GOAL_transit_delay_propagation.md</code></div>
+      </div>
+      <table>
+        <thead><tr><th>Phase</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>1 &middot; Collection</td><td><span class="tag tag-good">complete</span> 24h21m, 0 restarts</td></tr>
+          <tr><td>2 &middot; Schedule &amp; realisation panel</td><td><span class="tag tag-good">complete</span> 30.9M + 9.09M rows</td></tr>
+          <tr><td>3 &middot; Feature engineering</td><td><span class="tag tag-good">complete</span> leakage-tested, 7.74M rows</td></tr>
+          <tr><td>4 &middot; Models &amp; ablation</td><td><span class="tag tag-good">complete</span> 6 tiers, diagnosis done</td></tr>
+          <tr><td>5 &middot; Econometrics</td><td><span class="tag tag-critical">in progress</span> spatial Durbin, local projections</td></tr>
+        </tbody>
+      </table>
+      <div class="panel-desc" style="margin-top:2px;">Resources:</div>
+      <ul style="margin:0; padding-left:18px; font-size:12.5px; color:var(--text-2); display:flex; flex-direction:column; gap:5px;">
+        <li><a href="https://github.com/ofurkancoban/transit-delay-propagation" style="color:var(--accent-ink);">Repository</a> &middot; source, tests, CI</li>
+        <li><a href="https://github.com/ofurkancoban/transit-delay-propagation/blob/main/notebooks/03_model_results.ipynb" style="color:var(--accent-ink);">03_model_results.ipynb</a> &middot; full comparison + diagnosis</li>
+        <li><a href="https://github.com/ofurkancoban/transit-delay-propagation/blob/main/GOAL_transit_delay_propagation.md" style="color:var(--accent-ink);">Goal spec</a> &middot; acceptance criteria per phase</li>
+      </ul>
+    </div>
+
+  </section>
+
   <section class="callout">
     <h2>Feed limitations found so far</h2>
     <ul>
