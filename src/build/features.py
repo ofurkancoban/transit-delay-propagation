@@ -27,6 +27,20 @@ Two known simplifications, both documented rather than hidden:
   skipped: `vehicle_id` is never populated on the primary feed (see
   README.md pitfall 4), so no vehicle-chain feature is estimable.
 
+Volatility features (`delay_jump_1`, `delay_jump_1_abs`, `delay_jump_2`,
+`delay_recent_std`, `delay_vs_route_recent_gap`) were added after a
+diagnostic in notebooks/03_model_results.ipynb found LightGBM's error is
+concentrated (>10x the operator's) on rows where the operator's own
+prediction had just changed, i.e. a currently-unfolding delay event.
+These features, all derivable from the TripUpdates already collected (no
+new data source), give a small, real, but not decisive improvement
+(~0.5% overall MAE, and only ~0.1% on the specific volatile-event rows
+that motivated them): they help the model use its existing recent-delay
+history more effectively, but do not substitute for the live vehicle
+position information the operator evidently has and this feed does not
+publish (confirmed empirically: a live pull of the primary feed contains
+zero VehiclePosition entities).
+
 Run as a script:
     python -m src.build.features --static-date 2026-07-23
 """
@@ -225,7 +239,14 @@ def build_features(
             avg(date_diff('second', obs_dep_ts, next_obs_arr_ts)) over (
                 partition by route_id, stop_id, next_stop_id order by obs_arr_ts
                 range between unbounded preceding and interval 1 second preceding
-            ) as segment_historical_avg_runtime
+            ) as segment_historical_avg_runtime,
+            (realised_dep_delay - delay_prev1) as delay_jump_1,
+            abs(realised_dep_delay - delay_prev1) as delay_jump_1_abs,
+            (delay_prev1 - delay_prev2) as delay_jump_2,
+            list_aggregate(
+                list_filter(list_value(realised_dep_delay, delay_prev1, delay_prev2, delay_prev3), x -> x is not null),
+                'stddev_pop'
+            ) as delay_recent_std
         from with_geo
     )
     select
@@ -251,6 +272,11 @@ def build_features(
         base.route_recent_mean_delay,
         base.route_recent_n,
         base.segment_recent_mean_delay,
+        base.delay_jump_1,
+        base.delay_jump_1_abs,
+        base.delay_jump_2,
+        base.delay_recent_std,
+        base.realised_dep_delay - base.route_recent_mean_delay as delay_vs_route_recent_gap,
         sp.upcoming_stop_scheduled_count_5min,
         cal.day_of_week,
         cal.is_public_holiday,

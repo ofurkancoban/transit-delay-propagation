@@ -73,7 +73,7 @@ edge-type ablation (the headline experiment) are all in
 `notebooks/03_model_results.ipynb`.
 
 **Headline result, reported honestly:** no tier beats the operator's own
-live forecast yet (operator MAE 7.99s vs LightGBM's 10.31s, the best of
+live forecast yet (operator MAE 7.99s vs LightGBM's 10.27s, the best of
 this repo's own models on the full test split), though LightGBM and the
 STGNN both clearly beat the naive baselines. The ablation shows the
 longitudinal (`sched_adj`) channel dominates; the vehicle-chain (`block`)
@@ -82,19 +82,26 @@ pitfall 4); transfer and shared-infrastructure channels show only a small
 effect at the current, deliberately subsampled graph coverage
 (`src/build/graph.py`, 30,000 of 264,933 nationwide stops).
 
-**Diagnosis (added after re-slicing the test split by how fresh the
-operator's own prediction was, see `notebooks/03_model_results.ipynb`):**
-the operator-gap is not primarily a tuning or data-volume problem. Outside
+**Diagnosis and fix attempt (see `notebooks/03_model_results.ipynb`):**
+re-slicing the test split by how fresh the operator's own prediction was
+showed the gap is not primarily a tuning or data-volume problem. Outside
 rows where the operator's prediction had just changed in the last minute
 ("volatile" delay events, 2.2% of the test split), LightGBM already
-matches or beats the operator. The entire aggregate gap concentrates in
-that 2.2%, where LightGBM's error is over 10x the operator's. A live pull
-of the primary feed confirms it publishes **zero** `VehiclePosition`
-entities (only TripUpdate and Alert), so whatever lets the operator track
-a delay the instant it starts is not exposed on this feed at all; more
-collection days would help the calmer 94% of rows (still warming up on a
-single day) but cannot close the volatile-event gap, which is a hard
-ceiling of `realtime.gtfs.de` itself, not a modelling shortfall.
+matches or beats the operator; the entire aggregate gap concentrates in
+that 2.2%, where LightGBM's error is over 10x the operator's. Five
+volatility features derived purely from existing TripUpdates history
+(`delay_jump_1`, `delay_jump_1_abs`, `delay_jump_2`, `delay_recent_std`,
+`delay_vs_route_recent_gap`, see `src/build/features.py`) were engineered
+and adopted into production: they give a small, real, uniform improvement
+(~0.5% overall MAE) but essentially none (0.1%) on the volatile regime
+specifically, confirming the gap there is structural rather than fixable
+by feature engineering. A live pull of the primary feed confirms it
+publishes **zero** `VehiclePosition` entities (only TripUpdate and
+Alert), so whatever lets the operator track a delay the instant it starts
+is not exposed on this feed at all. More collection days would help the
+calmer 94% of rows (still warming up on a single day) but cannot close
+the volatile-event gap, which is a hard ceiling of `realtime.gtfs.de`
+itself, not something more tuning or feature engineering can reach.
 
 Live dashboard: https://ofurkancoban.github.io/transit-delay-propagation/
 
