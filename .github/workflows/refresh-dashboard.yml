@@ -1,0 +1,44 @@
+name: Refresh dashboard stats
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch live stats from the VPS collector
+        env:
+          VPS_HOST: ${{ secrets.VPS_STATS_HOST }}
+          VPS_USER: ${{ secrets.VPS_STATS_USER }}
+          VPS_SSH_KEY: ${{ secrets.VPS_STATS_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$VPS_SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "$VPS_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          # The remote authorized_keys entry forces this key to run only
+          # scripts/vps_stats.py (read-only), so no command is passed here.
+          ssh -i ~/.ssh/id_ed25519 -o BatchMode=yes "$VPS_USER@$VPS_HOST" > docs/stats.json
+
+      - name: Validate JSON
+        run: python3 -c "import json; json.load(open('docs/stats.json'))"
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- docs/stats.json; then
+            echo "no changes"
+            exit 0
+          fi
+          git add docs/stats.json
+          git commit -m "chore: refresh dashboard stats [skip ci]"
+          git push

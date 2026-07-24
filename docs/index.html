@@ -313,11 +313,11 @@
     <div>
       <div class="eyebrow">Transit Delay Propagation &middot; Germany-wide GTFS-RT</div>
       <h1>Collection <span>operations</span> dashboard</h1>
-      <div class="top-meta">Snapshot as of <b>2026-07-24 15:36 CEST</b> &middot; window started <b>2026-07-23 15:06 CEST</b> &middot; <b>Phase 1 acceptance met</b></div>
+      <div class="top-meta" id="top-meta">Snapshot as of <b>2026-07-24 15:36 CEST</b> &middot; window started <b>2026-07-23 15:06 CEST</b> &middot; <b>Phase 1 acceptance met</b></div>
       <div class="progress-track"><div class="progress-fill" style="width: 100%;"></div></div>
-      <div class="progress-label"><span>24h 21m collected, zero collector restarts</span><span>24h acceptance mark reached</span></div>
+      <div class="progress-label"><span>24h 21m collected, zero collector restarts</span><span id="live-refresh-label">24h acceptance mark reached</span></div>
     </div>
-    <span class="status-pill"><span class="status-dot"></span>Phase 1 complete &middot; systemd, Restart=always, 0 restarts</span>
+    <span class="status-pill" id="status-pill"><span class="status-dot" id="status-dot"></span><span id="status-text">Phase 1 complete &middot; systemd, Restart=always, 0 restarts</span></span>
   </header>
 
   <section class="stat-row">
@@ -560,6 +560,79 @@
   </footer>
 
 </div>
+
+<script>
+(function () {
+  var STATUS_COLORS = { good: "#35c23a", warning: "#fab219", critical: "#ea6b6b" };
+
+  function fmtAgo(iso) {
+    var diffMs = Date.now() - new Date(iso).getTime();
+    var s = Math.round(diffMs / 1000);
+    if (s < 90) return s + "s ago";
+    var m = Math.round(s / 60);
+    if (m < 90) return m + "m ago";
+    return Math.round(m / 60) + "h ago";
+  }
+
+  function setStatusColor(hex) {
+    var dot = document.getElementById("status-dot");
+    if (!dot) return;
+    dot.style.background = hex;
+    dot.style.boxShadow = "0 0 0 4px " + hex + "38";
+  }
+
+  function render(stats) {
+    var text = document.getElementById("status-text");
+    var meta = document.getElementById("top-meta");
+    var label = document.getElementById("live-refresh-label");
+    if (!text || !meta) return;
+
+    var sysd = stats.systemd || {};
+    var log = stats.log || {};
+    var poll = log.last_poll || {};
+    var statsAge = fmtAgo(stats.generated_at);
+    var statsStale = (Date.now() - new Date(stats.generated_at).getTime()) > 20 * 60 * 1000;
+
+    if (sysd.active === "active" && !statsStale) {
+      setStatusColor(STATUS_COLORS.good);
+      text.textContent = "Collector live · systemd active · " + (sysd.restarts || 0) + " restarts";
+    } else if (statsStale) {
+      setStatusColor(STATUS_COLORS.warning);
+      text.textContent = "Stats feed stale (refresh workflow may be delayed)";
+    } else {
+      setStatusColor(STATUS_COLORS.critical);
+      text.textContent = "Collector not active (systemd: " + sysd.active + ")";
+    }
+
+    var bits = ["Live · stats fetched " + statsAge];
+    if (poll.poll) {
+      bits.push("poll #" + poll.poll + " · lag " + poll.lag_s + "s · total rows " + poll.total_written.toLocaleString());
+    }
+    if (poll.alert_rows_total !== null && poll.alert_rows_total !== undefined) {
+      bits.push("alert rows " + poll.alert_rows_total.toLocaleString());
+    }
+    meta.innerHTML = bits.join(" &middot; ");
+    if (label) label.textContent = "auto-refreshes every ~10 min";
+  }
+
+  function renderError() {
+    var text = document.getElementById("status-text");
+    var meta = document.getElementById("top-meta");
+    if (text) { setStatusColor(STATUS_COLORS.warning); text.textContent = "Live stats unavailable"; }
+    if (meta) meta.innerHTML = "Could not load stats.json (static snapshot below may be out of date)";
+  }
+
+  function refresh() {
+    fetch("stats.json", { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+      .then(render)
+      .catch(renderError);
+  }
+
+  refresh();
+  setInterval(refresh, 60000);
+})();
+</script>
 
 </body>
 </html>
