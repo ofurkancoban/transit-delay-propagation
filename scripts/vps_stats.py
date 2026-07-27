@@ -144,16 +144,25 @@ def lake_stats() -> dict:
         return {"error": str(exc)}
 
 
-def latest_static_stops_path() -> Path | None:
-    """Most recently fetched static feed's stops.txt (for stop lat/lon)."""
+def latest_static_extracted_dir() -> Path | None:
+    """Most recently fetched static feed's extracted/ directory."""
     if not STATIC_DIR.exists():
         return None
     candidates = sorted((d for d in STATIC_DIR.iterdir() if d.is_dir()), reverse=True)
     for d in candidates:
-        stops = d / "extracted" / "stops.txt"
-        if stops.exists():
-            return stops
+        extracted = d / "extracted"
+        if (extracted / "stops.txt").exists():
+            return extracted
     return None
+
+
+ROUTE_TYPE_NAMES = {
+    0: "tram/light rail",
+    1: "subway",
+    2: "regional rail",
+    3: "bus",
+    4: "ferry",
+}
 
 
 def recent_rt_globs(now: datetime, window_minutes: int) -> list[str]:
@@ -179,9 +188,13 @@ def map_snapshot() -> dict:
     bound over time. Showing the worst delays is also the more useful
     view for a "delay propagation" map than an unfiltered scatter.
     """
-    stops_path = latest_static_stops_path()
-    if stops_path is None:
+    extracted = latest_static_extracted_dir()
+    if extracted is None:
         return {"error": "no static stops.txt found"}
+    stops_path = extracted / "stops.txt"
+    trips_path = extracted / "trips.txt"
+    routes_path = extracted / "routes.txt"
+    agency_path = extracted / "agency.txt"
 
     now = datetime.now(timezone.utc)
     globs = recent_rt_globs(now, MAP_WINDOW_MINUTES)
@@ -196,10 +209,18 @@ def map_snapshot() -> dict:
                 from read_parquet({globs!r})
                 where poll_ts >= timestamp '{cutoff.strftime('%Y-%m-%d %H:%M:%S')}'
                     and arrival_delay is not null
+            ),
+            trip_agency as (
+                select t.trip_id, r.route_type, coalesce(a.agency_name, 'unknown') as agency_name
+                from read_csv_auto({str(trips_path)!r}) t
+                left join read_csv_auto({str(routes_path)!r}) r using (route_id)
+                left join read_csv_auto({str(agency_path)!r}) a using (agency_id)
             )
-            select s.stop_id, s.stop_name, s.stop_lat, s.stop_lon, r.arrival_delay, r.trip_id
+            select s.stop_id, s.stop_name, s.stop_lat, s.stop_lon, r.arrival_delay, r.trip_id,
+                ta.route_type, ta.agency_name
             from recent r
             join read_csv_auto({str(stops_path)!r}) s using (stop_id)
+            left join trip_agency ta on ta.trip_id = r.trip_id
             where r.rn = 1
             order by abs(r.arrival_delay) desc
             limit {MAP_MAX_STOPS}
@@ -219,6 +240,8 @@ def map_snapshot() -> dict:
                 "lon": r[3],
                 "delay_s": r[4],
                 "trip_id": r[5],
+                "mode": ROUTE_TYPE_NAMES.get(r[6], "unknown"),
+                "agency": r[7] or "unknown",
             }
             for r in rows
         ],

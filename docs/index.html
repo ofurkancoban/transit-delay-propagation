@@ -350,7 +350,7 @@
         <ul>
           <li>The primary feed publishes <b>no live vehicle position</b> (confirmed by a direct protobuf pull, see Feed limits below), so there is no GPS dot to animate. What <i>is</i> live: each stop's <b>last reported delay</b> from TripUpdates, plotted at that stop's real coordinate on an OpenStreetMap base (roads, borders, place names all real map data, zoom/pan/click supported).</li>
           <li>To keep the JSON this map reads light enough to commit every ~10 minutes indefinitely, it shows only the <b>250 stops with the largest currently-known delay</b> nationwide in the trailing 15-minute window &mdash; not the full network (~130,000 distinct stops report in any given 20-minute window). This is the delay-propagation frontier, not a full live map of the system.</li>
-          <li>Click a marker for the stop name, trip id, and delay. Marker color/size scale with delay severity.</li>
+          <li>Click a marker for the stop name, trip id, delay, transport mode, and operating agency (joined from the static feed's <code>trips.txt</code>/<code>routes.txt</code>/<code>agency.txt</code>). Marker color/size scale with delay severity.</li>
         </ul>
       </div>
       <div class="panel">
@@ -992,7 +992,8 @@
         })
           .bindPopup(
             "<b>" + (s.stop_name || s.stop_id) + "</b>" +
-            "delay " + (s.delay_s / 60).toFixed(1) + " min &middot; trip " + s.trip_id
+            "delay " + (s.delay_s / 60).toFixed(1) + " min &middot; trip " + s.trip_id + "<br>" +
+            (s.mode || "unknown mode") + " &middot; " + (s.agency || "unknown agency")
           )
           .addTo(leafletMarkers);
       } else {
