@@ -9,164 +9,191 @@
 <style>
   :root {
     color-scheme: light;
-    --bg:            #F3F5F7;
+    --bg:            #EEEEE8;
+    --rail:          #E3E2D9;
     --panel:         #FFFFFF;
-    --panel-2:       #F7F9FB;
-    --border:        rgba(20,30,40,0.10);
-    --border-strong: rgba(20,30,40,0.20);
-    --ink:           #10151C;
-    --ink-2:         #414C59;
-    --ink-3:         #7C8794;
-    --accent:        #0E7C90;
-    --accent-strong: #0A5F70;
-    --good:          #1C8A4B;
-    --warn:          #B8790A;
-    --crit:          #C4372E;
-    --cat-teal:      #0E7C90;
-    --cat-amber:     #B8790A;
-    --cat-indigo:    #4C5FB0;
-    --cat-rose:      #B0466E;
-    --cat-mint:      #2E8F6B;
-    --grid-line:     #E2E6EB;
-    --baseline-line: #C7CDD4;
+    --panel-2:       #F5F4EE;
+    --border:        rgba(30,26,15,0.12);
+    --border-strong: rgba(30,26,15,0.22);
+    --ink:           #17150E;
+    --ink-2:         #47432E;
+    --ink-3:         #837D63;
+    --accent:        #B4740E;
+    --accent-strong: #8F5B0A;
+    --accent-soft:   rgba(180,116,14,0.14);
+    --good:          #2E7D46;
+    --warn:          #B4740E;
+    --crit:          #B03A2E;
+    --cat-amber:     #B4740E;
+    --cat-teal:      #1E7A80;
+    --cat-indigo:    #4B5AA0;
+    --cat-rose:      #A5426A;
+    --cat-mint:      #3C8560;
+    --grid-line:     #DEDCCF;
+    --baseline-line: #C6C3AF;
     --font-ui:   -apple-system, "Segoe UI", "SF Pro Text", Roboto, "Helvetica Neue", Arial, sans-serif;
     --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, Consolas, monospace;
   }
   @media (prefers-color-scheme: dark) {
     :root:where(:not([data-theme="light"])) {
       color-scheme: dark;
-      --bg:            #090C10;
-      --panel:         #11151C;
-      --panel-2:       #161B23;
-      --border:        rgba(160,190,210,0.12);
-      --border-strong: rgba(160,190,210,0.22);
-      --ink:           #E7EBEF;
-      --ink-2:         #AEB8C4;
-      --ink-3:         #7A8492;
-      --accent:        #34B4CC;
-      --accent-strong: #5FC9DE;
-      --good:          #34C271;
-      --warn:          #E2A63A;
-      --crit:          #E5645A;
-      --cat-teal:      #34B4CC;
-      --cat-amber:     #E2A63A;
-      --cat-indigo:    #8791E0;
-      --cat-rose:      #E084A8;
-      --cat-mint:      #5CC49A;
-      --grid-line:     #232A34;
-      --baseline-line: #333D49;
+      --bg:            #0A0B0E;
+      --rail:          #101216;
+      --panel:         #16181D;
+      --panel-2:       #1B1E24;
+      --border:        rgba(215,200,160,0.12);
+      --border-strong: rgba(215,200,160,0.22);
+      --ink:           #ECE9DF;
+      --ink-2:         #B6B29F;
+      --ink-3:         #7C7867;
+      --accent:        #E8A93D;
+      --accent-strong: #F4C069;
+      --accent-soft:   rgba(232,169,61,0.16);
+      --good:          #4CAE6E;
+      --warn:          #E8A93D;
+      --crit:          #E0685A;
+      --cat-amber:     #E8A93D;
+      --cat-teal:      #45B4BB;
+      --cat-indigo:    #8E9AE0;
+      --cat-rose:      #E086A8;
+      --cat-mint:      #63C393;
+      --grid-line:     #24272E;
+      --baseline-line: #333742;
     }
   }
   :root[data-theme="dark"] {
     color-scheme: dark;
-    --bg:            #090C10;
-    --panel:         #11151C;
-    --panel-2:       #161B23;
-    --border:        rgba(160,190,210,0.12);
-    --border-strong: rgba(160,190,210,0.22);
-    --ink:           #E7EBEF;
-    --ink-2:         #AEB8C4;
-    --ink-3:         #7A8492;
-    --accent:        #34B4CC;
-    --accent-strong: #5FC9DE;
-    --good:          #34C271;
-    --warn:          #E2A63A;
-    --crit:          #E5645A;
-    --cat-teal:      #34B4CC;
-    --cat-amber:     #E2A63A;
-    --cat-indigo:    #8791E0;
-    --cat-rose:      #E084A8;
-    --cat-mint:      #5CC49A;
-    --grid-line:     #232A34;
-    --baseline-line: #333D49;
+    --bg:            #0A0B0E;
+    --rail:          #101216;
+    --panel:         #16181D;
+    --panel-2:       #1B1E24;
+    --border:        rgba(215,200,160,0.12);
+    --border-strong: rgba(215,200,160,0.22);
+    --ink:           #ECE9DF;
+    --ink-2:         #B6B29F;
+    --ink-3:         #7C7867;
+    --accent:        #E8A93D;
+    --accent-strong: #F4C069;
+    --accent-soft:   rgba(232,169,61,0.16);
+    --good:          #4CAE6E;
+    --warn:          #E8A93D;
+    --crit:          #E0685A;
+    --cat-amber:     #E8A93D;
+    --cat-teal:      #45B4BB;
+    --cat-indigo:    #8E9AE0;
+    --cat-rose:      #E086A8;
+    --cat-mint:      #63C393;
+    --grid-line:     #24272E;
+    --baseline-line: #333742;
   }
   :root[data-theme="light"] {
     color-scheme: light;
-    --bg: #F3F5F7; --panel: #FFFFFF; --panel-2: #F7F9FB;
+    --bg: #EEEEE8; --rail: #E3E2D9; --panel: #FFFFFF; --panel-2: #F5F4EE;
   }
 
   * { box-sizing: border-box; }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 
   html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-ui); -webkit-font-smoothing: antialiased; }
-  body { padding: 24px 20px 56px; overflow-x: hidden; }
-  a { color: var(--accent-strong); }
+  a { color: var(--accent-strong); text-decoration: none; }
+  a:hover { text-decoration: underline; }
   a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-  .console { max-width: 1360px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+  .shell { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+  @media (max-width: 860px) { .shell { grid-template-columns: 1fr; } }
 
-  /* ---------- top bar ---------- */
-  .topbar {
-    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
-    gap: 12px 20px;
-    padding-bottom: 16px;
-    border-bottom: 2px solid var(--accent);
+  /* ---------- rail (sidebar) ---------- */
+  .rail {
+    background: var(--rail); border-right: 1px solid var(--border);
+    padding: 22px 16px; display: flex; flex-direction: column; gap: 22px;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
   }
-  .brand { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-  .brand-mark {
-    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
-    letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3);
-  }
-  .brand-title { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.25; text-wrap: balance; margin: 0; }
-  .brand-title em { color: var(--accent-strong); font-style: normal; }
+  @media (max-width: 860px) { .rail { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; } }
 
-  .topbar-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
-  .live-chip {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 6px 12px 6px 10px; border-radius: 5px;
-    background: color-mix(in srgb, var(--good) 12%, var(--panel));
-    border: 1px solid color-mix(in srgb, var(--good) 38%, var(--border));
-    font-size: 12.5px; font-weight: 600; white-space: nowrap;
+  .rail-brand { display: flex; flex-direction: column; gap: 3px; }
+  .rail-brand .mark { width: 22px; height: 22px; border: 2px solid var(--accent); border-radius: 3px; position: relative; flex: none; }
+  .rail-brand .mark::after { content: ""; position: absolute; inset: 4px; background: var(--accent); border-radius: 1px; }
+  .rail-brand-row { display: flex; align-items: center; gap: 9px; }
+  .rail-brand-name { font-size: 13.5px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; }
+  .rail-brand-sub { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+
+  .rail-nav { display: flex; flex-direction: column; gap: 1px; }
+  @media (max-width: 860px) { .rail-nav { flex-direction: row; flex-wrap: wrap; gap: 4px; } }
+  .rail-nav a {
+    color: var(--ink-2); font-size: 12.5px; font-weight: 600; padding: 7px 9px; border-radius: 5px;
+    display: flex; align-items: center; gap: 9px; text-decoration: none;
   }
-  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 3px color-mix(in srgb, var(--good) 25%, transparent); flex: none; }
-  .live-meta { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-3); text-align: right; max-width: 460px; }
-  .live-meta b { color: var(--ink-2); font-weight: 600; }
+  .rail-nav a:hover { background: var(--panel-2); color: var(--ink); }
+  .rail-nav a .idx { font-family: var(--font-mono); font-size: 10px; color: var(--accent); width: 14px; flex: none; }
+
+  .rail-status {
+    margin-top: auto; display: flex; flex-direction: column; gap: 8px;
+    padding: 12px; border-radius: 7px; background: var(--panel); border: 1px solid var(--border);
+  }
+  @media (max-width: 860px) { .rail-status { margin-top: 0; } }
+  .rail-status-top { display: flex; align-items: center; gap: 7px; font-size: 11.5px; font-weight: 700; }
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--good); box-shadow: 0 0 0 3px color-mix(in srgb, var(--good) 25%, transparent); flex: none; }
+  .rail-status-meta { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); line-height: 1.5; }
+  .rail-status-meta b { color: var(--ink-2); font-weight: 600; }
+
+  /* ---------- main ---------- */
+  .main { padding: 26px 28px 56px; display: flex; flex-direction: column; gap: 26px; min-width: 0; }
+  @media (max-width: 640px) { .main { padding: 20px 16px 44px; } }
+
+  .page-head { display: flex; flex-direction: column; gap: 6px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+  .page-head h1 { font-size: 21px; font-weight: 700; letter-spacing: -0.01em; margin: 0; text-wrap: balance; }
+  .page-head .desc { font-size: 12.5px; color: var(--ink-3); }
+
+  section.view { scroll-margin-top: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .view-title { display: flex; align-items: baseline; gap: 10px; }
+  .view-title h2 {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent-strong); margin: 0;
+  }
+  .view-title .rule { flex: 1; height: 1px; background: var(--border-strong); }
 
   /* ---------- KPI strip ---------- */
-  .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .kpi-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
   .kpi {
-    background: var(--panel); padding: 14px 16px;
-    border-left: 3px solid var(--accent);
+    background: var(--panel); border: 1px solid var(--border); border-top: 2px solid var(--accent);
+    border-radius: 6px; padding: 12px 14px;
     display: flex; flex-direction: column; gap: 4px;
   }
-  .kpi[data-tone="good"] { border-left-color: var(--good); }
-  .kpi[data-tone="warn"] { border-left-color: var(--warn); }
-  .kpi[data-tone="crit"] { border-left-color: var(--crit); }
-  .kpi-label { font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3); }
-  .kpi-value { font-family: var(--font-mono); font-size: 22px; font-weight: 700; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
-  .kpi-sub { font-size: 11.5px; color: var(--ink-2); line-height: 1.4; }
+  .kpi[data-tone="good"] { border-top-color: var(--good); }
+  .kpi[data-tone="warn"] { border-top-color: var(--warn); }
+  .kpi[data-tone="crit"] { border-top-color: var(--crit); }
+  .kpi-label { font-family: var(--font-mono); font-size: 9.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+  .kpi-value { font-family: var(--font-mono); font-size: 21px; font-weight: 700; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+  .kpi-sub { font-size: 11px; color: var(--ink-2); line-height: 1.4; }
 
   /* ---------- layout grid ---------- */
-  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
   @media (max-width: 900px) { .row-2 { grid-template-columns: 1fr; } }
 
   .panel {
-    background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
-    padding: 18px 20px; display: flex; flex-direction: column; gap: 14px;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 7px;
+    padding: 16px 18px; display: flex; flex-direction: column; gap: 13px;
   }
   .panel-head { display: flex; flex-direction: column; gap: 3px; }
-  .panel-head h2 {
-    font-size: 13px; margin: 0; font-weight: 700; letter-spacing: 0.03em;
-    text-transform: uppercase; color: var(--ink);
-  }
-  .panel-note { font-size: 12px; color: var(--ink-3); line-height: 1.5; }
+  .panel-head h3 { font-size: 12.5px; margin: 0; font-weight: 700; letter-spacing: 0.02em; color: var(--ink); }
+  .panel-note { font-size: 11.5px; color: var(--ink-3); line-height: 1.5; }
 
-  .block { display: flex; flex-direction: column; gap: 8px; }
-  .block-title { font-size: 12px; font-weight: 600; color: var(--ink-2); }
-  .block-foot { font-size: 11.5px; color: var(--ink-3); line-height: 1.5; }
+  .block { display: flex; flex-direction: column; gap: 7px; }
+  .block-title { font-size: 11.5px; font-weight: 600; color: var(--ink-2); }
+  .block-foot { font-size: 11px; color: var(--ink-3); line-height: 1.5; }
 
   svg text { fill: var(--ink-2); font-family: var(--font-ui); }
   .axis-label { fill: var(--ink-3); font-size: 10px; font-family: var(--font-mono); }
   .tick-line { stroke: var(--grid-line); stroke-width: 1; }
 
   .table-scroll { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
   thead th {
-    text-align: left; font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
-    color: var(--ink-3); padding: 0 10px 8px 0; border-bottom: 1px solid var(--border-strong);
+    text-align: left; font-size: 9.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink-3); padding: 0 9px 7px 0; border-bottom: 1px solid var(--border-strong);
     white-space: nowrap;
   }
-  tbody td { padding: 7px 10px 7px 0; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; vertical-align: middle; white-space: nowrap; }
+  tbody td { padding: 6px 9px 6px 0; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; vertical-align: middle; white-space: nowrap; }
   tbody tr:last-child td { border-bottom: none; }
   .num { text-align: right; font-family: var(--font-mono); }
   .cat-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; vertical-align: middle; flex: none; }
@@ -174,484 +201,528 @@
   .delta-bad  { color: var(--crit); font-weight: 700; }
   .dim { color: var(--ink-3); }
 
-  .cmp-row { display: flex; flex-direction: column; gap: 6px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .cmp-row { display: flex; flex-direction: column; gap: 6px; padding: 9px 0; border-bottom: 1px solid var(--border); }
   .cmp-row:last-child { border-bottom: none; padding-bottom: 0; }
-  .cmp-label { display: flex; justify-content: space-between; align-items: baseline; font-size: 12.5px; font-weight: 600; }
-  .cmp-label .n { font-family: var(--font-mono); font-size: 11px; color: var(--ink-3); font-weight: 400; }
-  .cmp-bar-line { display: grid; grid-template-columns: 68px 1fr 52px; align-items: center; gap: 8px; font-size: 11.5px; }
-  .cmp-bar-track { height: 8px; border-radius: 3px; background: var(--grid-line); overflow: hidden; }
+  .cmp-label { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; font-weight: 600; }
+  .cmp-label .n { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-3); font-weight: 400; }
+  .cmp-bar-line { display: grid; grid-template-columns: 62px 1fr 50px; align-items: center; gap: 8px; font-size: 11px; }
+  .cmp-bar-track { height: 7px; border-radius: 3px; background: var(--grid-line); overflow: hidden; }
   .cmp-bar-fill { height: 100%; border-radius: 3px; }
   .cmp-bar-val { font-family: var(--font-mono); text-align: right; font-variant-numeric: tabular-nums; }
 
   .meter { display: flex; flex-direction: column; gap: 6px; }
-  .meter-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 12.5px; gap: 10px; }
+  .meter-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; gap: 10px; }
   .meter-head .val { font-family: var(--font-mono); font-weight: 700; font-variant-numeric: tabular-nums; }
-  .meter-track { height: 8px; background: var(--grid-line); border-radius: 3px; overflow: hidden; }
+  .meter-track { height: 7px; background: var(--grid-line); border-radius: 3px; overflow: hidden; }
   .meter-fill { height: 100%; border-radius: 3px; }
 
-  .tag { font-family: var(--font-mono); font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.03em; white-space: nowrap; }
+  .tag { font-family: var(--font-mono); font-size: 9.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.03em; white-space: nowrap; }
   .tag-crit { background: color-mix(in srgb, var(--crit) 16%, transparent); color: var(--crit); }
   .tag-good { background: color-mix(in srgb, var(--good) 16%, transparent); color: var(--good); }
 
-  .callout { border: 1px solid var(--border); border-left: 3px solid var(--warn); background: var(--panel); border-radius: 8px; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+  .callout { border: 1px solid var(--border); border-left: 3px solid var(--warn); background: var(--panel); border-radius: 7px; padding: 15px 18px; display: flex; flex-direction: column; gap: 9px; }
   .callout.crit-edge { border-left-color: var(--crit); }
-  .callout h2 { font-size: 13px; margin: 0; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink); }
-  .callout ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; }
-  .callout li { font-size: 12.5px; color: var(--ink-2); line-height: 1.55; }
+  .callout h3 { font-size: 12.5px; margin: 0; font-weight: 700; color: var(--ink); }
+  .callout ul { margin: 0; padding-left: 17px; display: flex; flex-direction: column; gap: 7px; }
+  .callout li { font-size: 12px; color: var(--ink-2); line-height: 1.55; }
   .callout li b { color: var(--ink); }
   .callout code, .panel-note code, .block-foot code {
     background: var(--panel-2); border: 1px solid var(--border); padding: 1px 5px; border-radius: 4px;
-    font-family: var(--font-mono); font-size: 11px;
+    font-family: var(--font-mono); font-size: 10.5px;
   }
 
-  .legend { display: flex; flex-wrap: wrap; gap: 10px 16px; font-size: 11.5px; color: var(--ink-2); }
+  .legend { display: flex; flex-wrap: wrap; gap: 9px 14px; font-size: 11px; color: var(--ink-2); }
   .legend-item { display: flex; align-items: center; gap: 6px; }
   .legend-swatch { width: 8px; height: 8px; border-radius: 2px; flex: none; }
 
-  .link-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; color: var(--ink-2); }
+  .link-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--ink-2); }
   .link-list a { font-weight: 600; }
 
   footer.foot {
-    text-align: center; font-size: 11px; color: var(--ink-3); font-family: var(--font-mono);
-    padding-top: 6px; border-top: 1px solid var(--border);
+    text-align: center; font-size: 10.5px; color: var(--ink-3); font-family: var(--font-mono);
+    padding-top: 14px; margin-top: 4px; border-top: 1px solid var(--border);
   }
 </style>
 
-<div class="console">
+<div class="shell">
 
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-mark">Transit Delay Propagation &middot; Germany-wide GTFS-RT &middot; Phases 1&ndash;5</div>
-      <h1 class="brand-title">Collection, modelling <em>&amp; live</em> ops console</h1>
-    </div>
-    <div class="topbar-right">
-      <span class="live-chip"><span class="live-dot" id="status-dot"></span><span id="status-text">Phase 1 complete &middot; systemd, Restart=always, 0 restarts</span></span>
-      <div class="live-meta" id="top-meta">Snapshot as of <b>2026-07-24 15:36 CEST</b> &middot; window started <b>2026-07-23 15:06 CEST</b></div>
-    </div>
-  </header>
-
-  <section class="kpi-strip">
-    <div class="kpi" data-tone="good">
-      <div class="kpi-label">Raw snapshot rows</div>
-      <div class="kpi-value">44.4M</div>
-      <div class="kpi-sub">2,859 poll files, full 24h+ window</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Distinct trips seen</div>
-      <div class="kpi-value">504,503</div>
-      <div class="kpi-sub">9.09M stop-events realised</div>
-    </div>
-    <div class="kpi" data-tone="good">
-      <div class="kpi-label">Poll success rate</div>
-      <div class="kpi-value">100%</div>
-      <div class="kpi-sub">2,667 polls &middot; 0 errors &middot; 0 restarts</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Feed lag, p50</div>
-      <div class="kpi-value">3s</div>
-      <div class="kpi-sub">2 upstream stalls (6&amp;10min), no downtime</div>
-    </div>
-    <div class="kpi" data-tone="warn">
-      <div class="kpi-label">Delay &gt; 6 min</div>
-      <div class="kpi-value">3.7%</div>
-      <div class="kpi-sub">of 9.09M scored arrivals</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Best model MAE</div>
-      <div class="kpi-value">10.27s</div>
-      <div class="kpi-sub">LightGBM &middot; operator 7.99s &middot; skill &minus;28.5%</div>
-    </div>
-    <div class="kpi">
-      <div class="kpi-label">Live alert rows</div>
-      <div class="kpi-value" id="live-alert-total">&mdash;</div>
-      <div class="kpi-sub" id="live-alert-sub">ServiceAlerts collected since deployment</div>
-    </div>
-  </section>
-
-  <section class="row-2">
-
-    <div class="panel">
-      <div class="panel-head">
-        <h2>Collector health</h2>
-        <div class="panel-note">Primary feed, realtime.gtfs.de &middot; 30s poll interval</div>
+  <nav class="rail" aria-label="Section navigation">
+    <div class="rail-brand">
+      <div class="rail-brand-row">
+        <span class="mark" aria-hidden="true"></span>
+        <span class="rail-brand-name">TDP Ops Console</span>
       </div>
+      <span class="rail-brand-sub">Germany-wide GTFS-RT</span>
+    </div>
 
-      <div class="block">
-        <div class="block-title">Feed lag distribution (seconds)</div>
-        <svg viewBox="0 0 560 90" width="100%" height="90" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Feed lag distribution from p50 18 seconds to max 39 seconds">
-          <line x1="20" y1="55" x2="540" y2="55" class="tick-line"></line>
-          <rect x="20" y="49" width="500" height="12" rx="6" fill="var(--grid-line)"></rect>
-          <rect x="20" y="49" width="487" height="12" rx="6" fill="var(--accent)" opacity="0.30"></rect>
-          <g>
-            <circle cx="245" cy="55" r="5" fill="var(--accent)"></circle>
-            <text x="245" y="38" font-size="11" text-anchor="middle" font-weight="700" font-family="var(--font-mono)">18s</text>
-            <text x="245" y="80" font-size="9.5" text-anchor="middle" class="axis-label">p50</text>
-          </g>
-          <g>
-            <circle cx="382" cy="55" r="5" fill="var(--warn)"></circle>
-            <text x="382" y="38" font-size="11" text-anchor="middle" font-weight="700" font-family="var(--font-mono)">29s</text>
-            <text x="382" y="80" font-size="9.5" text-anchor="middle" class="axis-label">p90</text>
-          </g>
-          <g>
-            <circle cx="458" cy="55" r="5" fill="var(--crit)"></circle>
-            <text x="458" y="38" font-size="11" text-anchor="middle" font-weight="700" font-family="var(--font-mono)">35s</text>
-            <text x="458" y="80" font-size="9.5" text-anchor="middle" class="axis-label">p99</text>
-          </g>
-          <g>
-            <circle cx="507" cy="55" r="4" fill="var(--ink-3)"></circle>
-            <text x="507" y="80" font-size="9.5" text-anchor="middle" class="axis-label">max 39s</text>
-          </g>
-          <text x="20" y="80" font-size="9.5" class="axis-label">0s</text>
-        </svg>
-      </div>
+    <div class="rail-nav">
+      <a href="#overview"><span class="idx">01</span>Overview</a>
+      <a href="#collection"><span class="idx">02</span>Collection</a>
+      <a href="#modelling"><span class="idx">03</span>Modelling</a>
+      <a href="#diagnosis"><span class="idx">04</span>Diagnosis</a>
+      <a href="#segments"><span class="idx">05</span>Segments</a>
+      <a href="#alerts"><span class="idx">06</span>Alerts &amp; roadmap</a>
+      <a href="#limitations"><span class="idx">07</span>Feed limits</a>
+    </div>
 
-      <div class="block">
-        <div class="block-title">Raw rows collected per hour (Europe/Berlin)</div>
-        <svg viewBox="0 0 560 128" width="100%" height="128" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Rows collected per hour bar chart">
-          <line x1="34" y1="14" x2="540" y2="14" class="tick-line"></line>
-          <line x1="34" y1="50" x2="540" y2="50" class="tick-line"></line>
-          <line x1="34" y1="104" x2="540" y2="104" class="tick-line" stroke="var(--baseline-line)"></line>
-          <text x="30" y="17" font-size="9.5" text-anchor="end" class="axis-label">6M</text>
-          <text x="30" y="53" font-size="9.5" text-anchor="end" class="axis-label">3M</text>
-          <text x="30" y="107" font-size="9.5" text-anchor="end" class="axis-label">0</text>
-          <g>
-            <rect x="70"  y="14" width="70" height="90" rx="3" fill="var(--accent)"></rect>
-            <text x="105" y="10" font-size="10" text-anchor="middle" font-weight="700" font-family="var(--font-mono)">6.36M</text>
-            <text x="105" y="118" font-size="10" text-anchor="middle" class="axis-label">15:00</text>
-          </g>
-          <g>
-            <rect x="185" y="32" width="70" height="72" rx="3" fill="var(--accent)"></rect>
-            <text x="220" y="28" font-size="10" text-anchor="middle" font-weight="700" font-family="var(--font-mono)">5.11M</text>
-            <text x="220" y="118" font-size="10" text-anchor="middle" class="axis-label">16:00</text>
-          </g>
-          <g>
-            <rect x="300" y="37" width="70" height="67" rx="3" fill="var(--accent)"></rect>
-            <text x="335" y="33" font-size="10" text-anchor="middle" font-weight="700" font-family="var(--font-mono)">4.77M</text>
-            <text x="335" y="118" font-size="10" text-anchor="middle" class="axis-label">17:00</text>
-          </g>
-          <g>
-            <rect x="415" y="95" width="70" height="9" rx="3" fill="var(--accent)" opacity="0.4"></rect>
-            <text x="450" y="91" font-size="10" text-anchor="middle" font-weight="700" fill="var(--ink-3)" font-family="var(--font-mono)">0.59M*</text>
-            <text x="450" y="118" font-size="10" text-anchor="middle" class="axis-label">18:00</text>
-          </g>
-        </svg>
-        <div class="block-foot">*hour in progress at snapshot time</div>
-      </div>
+    <div class="rail-status">
+      <div class="rail-status-top"><span class="live-dot" id="status-dot"></span><span id="status-text">Phase 1 complete</span></div>
+      <div class="rail-status-meta" id="top-meta">Snapshot as of <b>2026-07-24 15:36 CEST</b> &middot; window started <b>2026-07-23 15:06 CEST</b></div>
+    </div>
+  </nav>
 
-      <div class="block">
-        <div class="block-title">Field coverage, primary feed</div>
-        <div class="meter">
-          <div class="meter-head"><span>stop_sequence present</span><span class="val">100% <span class="tag tag-good">complete</span></span></div>
-          <div class="meter-track"><div class="meter-fill" style="width:100%; background: var(--good);"></div></div>
+  <main class="main">
+
+    <div class="page-head">
+      <h1>Collection, modelling &amp; live operations</h1>
+      <div class="desc">Phases 1&ndash;5 &middot; a research pipeline for delay propagation on the German public transport network</div>
+    </div>
+
+    <section class="view" id="overview">
+      <div class="view-title"><h2>01 &middot; Overview</h2><span class="rule"></span></div>
+      <div class="kpi-strip">
+        <div class="kpi" data-tone="good">
+          <div class="kpi-label">Raw snapshot rows</div>
+          <div class="kpi-value">44.4M</div>
+          <div class="kpi-sub">2,859 poll files, full 24h+ window</div>
         </div>
-        <div class="meter">
-          <div class="meter-head"><span>vehicle_id present</span><span class="val">0% <span class="tag tag-crit">never set</span></span></div>
-          <div class="meter-track"><div class="meter-fill" style="width:0.6%; background: var(--crit);"></div></div>
+        <div class="kpi">
+          <div class="kpi-label">Distinct trips seen</div>
+          <div class="kpi-value">504,503</div>
+          <div class="kpi-sub">9.09M stop-events realised</div>
+        </div>
+        <div class="kpi" data-tone="good">
+          <div class="kpi-label">Poll success rate</div>
+          <div class="kpi-value">100%</div>
+          <div class="kpi-sub">2,667 polls &middot; 0 errors &middot; 0 restarts</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Feed lag, p50</div>
+          <div class="kpi-value">3s</div>
+          <div class="kpi-sub">2 upstream stalls (6&amp;10min), no downtime</div>
+        </div>
+        <div class="kpi" data-tone="warn">
+          <div class="kpi-label">Delay &gt; 6 min</div>
+          <div class="kpi-value">3.7%</div>
+          <div class="kpi-sub">of 9.09M scored arrivals</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Best model MAE</div>
+          <div class="kpi-value">10.27s</div>
+          <div class="kpi-sub">LightGBM &middot; operator 7.99s &middot; skill &minus;28.5%</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Live alert rows</div>
+          <div class="kpi-value" id="live-alert-total">&mdash;</div>
+          <div class="kpi-sub" id="live-alert-sub">ServiceAlerts collected since deployment</div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="panel">
-      <div class="panel-head">
-        <h2>Delay analysis</h2>
-        <div class="panel-note">Last observed arrival delay per stop, 5.85M scored events</div>
-      </div>
+    <section class="view" id="collection">
+      <div class="view-title"><h2>02 &middot; Collection</h2><span class="rule"></span></div>
+      <div class="row-2">
 
-      <div class="block">
-        <div class="block-title">Distribution of realised arrival delay</div>
-        <svg viewBox="0 0 560 140" width="100%" height="140" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Histogram of realised arrival delay">
-          <line x1="30" y1="112" x2="540" y2="112" class="tick-line" stroke="var(--baseline-line)"></line>
-          <g>
-            <rect x="35"  y="107" width="52" height="5"  rx="2" fill="var(--accent)"></rect>
-            <text x="61"  y="126" font-size="9.5" text-anchor="middle" class="axis-label">&lt;-1</text>
-            <text x="61"  y="100" font-size="9" text-anchor="middle" class="axis-label">1.8%</text>
-          </g>
-          <g>
-            <rect x="95"  y="98"  width="52" height="14" rx="2" fill="var(--accent)"></rect>
-            <text x="121" y="126" font-size="9.5" text-anchor="middle" class="axis-label">-1..0</text>
-            <text x="121" y="91" font-size="9" text-anchor="middle" class="axis-label">4.7%</text>
-          </g>
-          <g>
-            <rect x="155" y="22"  width="52" height="90" rx="2" fill="var(--accent)"></rect>
-            <text x="181" y="126" font-size="9.5" text-anchor="middle" class="axis-label">0..1</text>
-            <text x="181" y="16" font-size="9.5" text-anchor="middle" font-weight="700" font-family="var(--font-mono)">55.6%</text>
-          </g>
-          <g>
-            <rect x="215" y="75"  width="52" height="37" rx="2" fill="var(--accent)"></rect>
-            <text x="241" y="126" font-size="9.5" text-anchor="middle" class="axis-label">1..3</text>
-            <text x="241" y="69" font-size="9.5" text-anchor="middle" font-weight="700" font-family="var(--font-mono)">22.5%</text>
-          </g>
-          <g>
-            <rect x="275" y="95"  width="52" height="17" rx="2" fill="var(--accent)"></rect>
-            <text x="301" y="126" font-size="9.5" text-anchor="middle" class="axis-label">3..6</text>
-            <text x="301" y="89" font-size="9" text-anchor="middle" class="axis-label">10.1%</text>
-          </g>
-          <g>
-            <rect x="335" y="106" width="52" height="6"  rx="2" fill="var(--crit)"></rect>
-            <text x="361" y="126" font-size="9.5" text-anchor="middle" class="axis-label">6..10</text>
-            <text x="361" y="99" font-size="9" text-anchor="middle" class="axis-label">3.3%</text>
-          </g>
-          <g>
-            <rect x="395" y="109" width="52" height="3"  rx="2" fill="var(--crit)"></rect>
-            <text x="421" y="126" font-size="9.5" text-anchor="middle" class="axis-label">10..20</text>
-            <text x="421" y="102" font-size="9" text-anchor="middle" class="axis-label">1.5%</text>
-          </g>
-          <g>
-            <rect x="455" y="111" width="52" height="1.5" rx="1" fill="var(--crit)"></rect>
-            <text x="481" y="126" font-size="9.5" text-anchor="middle" class="axis-label">20+</text>
-            <text x="481" y="105" font-size="9" text-anchor="middle" class="axis-label">0.5%</text>
-          </g>
-        </svg>
-        <div class="legend">
-          <span class="legend-item"><span class="legend-swatch" style="background:var(--accent);"></span>within 6 min threshold</span>
-          <span class="legend-item"><span class="legend-swatch" style="background:var(--crit);"></span>exceeds 6 min (delay_exceed_threshold_minutes)</span>
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Collector health</h3>
+            <div class="panel-note">Primary feed, realtime.gtfs.de &middot; 30s poll interval</div>
+          </div>
+
+          <div class="block">
+            <div class="block-title">Feed lag distribution (seconds)</div>
+            <svg viewBox="0 0 560 90" width="100%" height="90" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Feed lag distribution from p50 18 seconds to max 39 seconds">
+              <line x1="20" y1="55" x2="540" y2="55" class="tick-line"></line>
+              <rect x="20" y="49" width="500" height="12" rx="6" fill="var(--grid-line)"></rect>
+              <rect x="20" y="49" width="487" height="12" rx="6" fill="var(--accent)" opacity="0.30"></rect>
+              <g>
+                <circle cx="245" cy="55" r="5" fill="var(--accent)"></circle>
+                <text x="245" y="38" font-size="11" text-anchor="middle" font-weight="700" font-family="var(--font-mono)">18s</text>
+                <text x="245" y="80" font-size="9.5" text-anchor="middle" class="axis-label">p50</text>
+              </g>
+              <g>
+                <circle cx="382" cy="55" r="5" fill="var(--cat-teal)"></circle>
+                <text x="382" y="38" font-size="11" text-anchor="middle" font-weight="700" font-family="var(--font-mono)">29s</text>
+                <text x="382" y="80" font-size="9.5" text-anchor="middle" class="axis-label">p90</text>
+              </g>
+              <g>
+                <circle cx="458" cy="55" r="5" fill="var(--crit)"></circle>
+                <text x="458" y="38" font-size="11" text-anchor="middle" font-weight="700" font-family="var(--font-mono)">35s</text>
+                <text x="458" y="80" font-size="9.5" text-anchor="middle" class="axis-label">p99</text>
+              </g>
+              <g>
+                <circle cx="507" cy="55" r="4" fill="var(--ink-3)"></circle>
+                <text x="507" y="80" font-size="9.5" text-anchor="middle" class="axis-label">max 39s</text>
+              </g>
+              <text x="20" y="80" font-size="9.5" class="axis-label">0s</text>
+            </svg>
+          </div>
+
+          <div class="block">
+            <div class="block-title">Raw rows collected per hour (Europe/Berlin)</div>
+            <svg viewBox="0 0 560 128" width="100%" height="128" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Rows collected per hour bar chart">
+              <line x1="34" y1="14" x2="540" y2="14" class="tick-line"></line>
+              <line x1="34" y1="50" x2="540" y2="50" class="tick-line"></line>
+              <line x1="34" y1="104" x2="540" y2="104" class="tick-line" stroke="var(--baseline-line)"></line>
+              <text x="30" y="17" font-size="9.5" text-anchor="end" class="axis-label">6M</text>
+              <text x="30" y="53" font-size="9.5" text-anchor="end" class="axis-label">3M</text>
+              <text x="30" y="107" font-size="9.5" text-anchor="end" class="axis-label">0</text>
+              <g>
+                <rect x="70"  y="14" width="70" height="90" rx="3" fill="var(--accent)"></rect>
+                <text x="105" y="10" font-size="10" text-anchor="middle" font-weight="700" font-family="var(--font-mono)">6.36M</text>
+                <text x="105" y="118" font-size="10" text-anchor="middle" class="axis-label">15:00</text>
+              </g>
+              <g>
+                <rect x="185" y="32" width="70" height="72" rx="3" fill="var(--accent)"></rect>
+                <text x="220" y="28" font-size="10" text-anchor="middle" font-weight="700" font-family="var(--font-mono)">5.11M</text>
+                <text x="220" y="118" font-size="10" text-anchor="middle" class="axis-label">16:00</text>
+              </g>
+              <g>
+                <rect x="300" y="37" width="70" height="67" rx="3" fill="var(--accent)"></rect>
+                <text x="335" y="33" font-size="10" text-anchor="middle" font-weight="700" font-family="var(--font-mono)">4.77M</text>
+                <text x="335" y="118" font-size="10" text-anchor="middle" class="axis-label">17:00</text>
+              </g>
+              <g>
+                <rect x="415" y="95" width="70" height="9" rx="3" fill="var(--accent)" opacity="0.4"></rect>
+                <text x="450" y="91" font-size="10" text-anchor="middle" font-weight="700" fill="var(--ink-3)" font-family="var(--font-mono)">0.59M*</text>
+                <text x="450" y="118" font-size="10" text-anchor="middle" class="axis-label">18:00</text>
+              </g>
+            </svg>
+            <div class="block-foot">*hour in progress at snapshot time</div>
+          </div>
+
+          <div class="block">
+            <div class="block-title">Field coverage, primary feed</div>
+            <div class="meter">
+              <div class="meter-head"><span>stop_sequence present</span><span class="val">100% <span class="tag tag-good">complete</span></span></div>
+              <div class="meter-track"><div class="meter-fill" style="width:100%; background: var(--good);"></div></div>
+            </div>
+            <div class="meter">
+              <div class="meter-head"><span>vehicle_id present</span><span class="val">0% <span class="tag tag-crit">never set</span></span></div>
+              <div class="meter-track"><div class="meter-fill" style="width:0.6%; background: var(--crit);"></div></div>
+            </div>
+          </div>
         </div>
-        <div class="block-foot">Mean 80s / median 1s / p90 240s / p99 840s &mdash; heavy right tail, as expected of delay data</div>
-      </div>
 
-      <div class="block">
-        <div class="block-title">Mode share, scored stop-events</div>
-        <svg viewBox="0 0 560 30" width="100%" height="30" role="img" aria-label="Mode share stacked bar">
-          <rect x="10" y="8" width="416.7" height="14" fill="var(--cat-teal)"></rect>
-          <rect x="426.7" y="8" width="51.9" height="14" fill="var(--cat-amber)"></rect>
-          <rect x="478.6" y="8" width="33.4" height="14" fill="var(--cat-indigo)"></rect>
-          <rect x="512" y="8" width="27" height="14" fill="var(--cat-rose)"></rect>
-          <rect x="539" y="8" width="1" height="14" fill="var(--cat-mint)"></rect>
-        </svg>
-        <div class="legend">
-          <span class="legend-item"><span class="legend-swatch" style="background:var(--cat-teal);"></span>Bus 78.7%</span>
-          <span class="legend-item"><span class="legend-swatch" style="background:var(--cat-amber);"></span>Tram 9.8%</span>
-          <span class="legend-item"><span class="legend-swatch" style="background:var(--cat-indigo);"></span>Rail 6.3%</span>
-          <span class="legend-item"><span class="legend-swatch" style="background:var(--cat-rose);"></span>Subway 5.1%</span>
-          <span class="legend-item"><span class="legend-swatch" style="background:var(--cat-mint);"></span>Ferry 0.02%</span>
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Delay analysis</h3>
+            <div class="panel-note">Last observed arrival delay per stop, 5.85M scored events</div>
+          </div>
+
+          <div class="block">
+            <div class="block-title">Distribution of realised arrival delay</div>
+            <svg viewBox="0 0 560 140" width="100%" height="140" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Histogram of realised arrival delay">
+              <line x1="30" y1="112" x2="540" y2="112" class="tick-line" stroke="var(--baseline-line)"></line>
+              <g>
+                <rect x="35"  y="107" width="52" height="5"  rx="2" fill="var(--accent)"></rect>
+                <text x="61"  y="126" font-size="9.5" text-anchor="middle" class="axis-label">&lt;-1</text>
+                <text x="61"  y="100" font-size="9" text-anchor="middle" class="axis-label">1.8%</text>
+              </g>
+              <g>
+                <rect x="95"  y="98"  width="52" height="14" rx="2" fill="var(--accent)"></rect>
+                <text x="121" y="126" font-size="9.5" text-anchor="middle" class="axis-label">-1..0</text>
+                <text x="121" y="91" font-size="9" text-anchor="middle" class="axis-label">4.7%</text>
+              </g>
+              <g>
+                <rect x="155" y="22"  width="52" height="90" rx="2" fill="var(--accent)"></rect>
+                <text x="181" y="126" font-size="9.5" text-anchor="middle" class="axis-label">0..1</text>
+                <text x="181" y="16" font-size="9.5" text-anchor="middle" font-weight="700" font-family="var(--font-mono)">55.6%</text>
+              </g>
+              <g>
+                <rect x="215" y="75"  width="52" height="37" rx="2" fill="var(--accent)"></rect>
+                <text x="241" y="126" font-size="9.5" text-anchor="middle" class="axis-label">1..3</text>
+                <text x="241" y="69" font-size="9.5" text-anchor="middle" font-weight="700" font-family="var(--font-mono)">22.5%</text>
+              </g>
+              <g>
+                <rect x="275" y="95"  width="52" height="17" rx="2" fill="var(--accent)"></rect>
+                <text x="301" y="126" font-size="9.5" text-anchor="middle" class="axis-label">3..6</text>
+                <text x="301" y="89" font-size="9" text-anchor="middle" class="axis-label">10.1%</text>
+              </g>
+              <g>
+                <rect x="335" y="106" width="52" height="6"  rx="2" fill="var(--crit)"></rect>
+                <text x="361" y="126" font-size="9.5" text-anchor="middle" class="axis-label">6..10</text>
+                <text x="361" y="99" font-size="9" text-anchor="middle" class="axis-label">3.3%</text>
+              </g>
+              <g>
+                <rect x="395" y="109" width="52" height="3"  rx="2" fill="var(--crit)"></rect>
+                <text x="421" y="126" font-size="9.5" text-anchor="middle" class="axis-label">10..20</text>
+                <text x="421" y="102" font-size="9" text-anchor="middle" class="axis-label">1.5%</text>
+              </g>
+              <g>
+                <rect x="455" y="111" width="52" height="1.5" rx="1" fill="var(--crit)"></rect>
+                <text x="481" y="126" font-size="9.5" text-anchor="middle" class="axis-label">20+</text>
+                <text x="481" y="105" font-size="9" text-anchor="middle" class="axis-label">0.5%</text>
+              </g>
+            </svg>
+            <div class="legend">
+              <span class="legend-item"><span class="legend-swatch" style="background:var(--accent);"></span>within 6 min threshold</span>
+              <span class="legend-item"><span class="legend-swatch" style="background:var(--crit);"></span>exceeds 6 min (delay_exceed_threshold_minutes)</span>
+            </div>
+            <div class="block-foot">Mean 80s / median 1s / p90 240s / p99 840s &mdash; heavy right tail, as expected of delay data</div>
+          </div>
+
+          <div class="block">
+            <div class="block-title">Mode share, scored stop-events</div>
+            <svg viewBox="0 0 560 30" width="100%" height="30" role="img" aria-label="Mode share stacked bar">
+              <rect x="10" y="8" width="416.7" height="14" fill="var(--accent)"></rect>
+              <rect x="426.7" y="8" width="51.9" height="14" fill="var(--cat-teal)"></rect>
+              <rect x="478.6" y="8" width="33.4" height="14" fill="var(--cat-indigo)"></rect>
+              <rect x="512" y="8" width="27" height="14" fill="var(--cat-rose)"></rect>
+              <rect x="539" y="8" width="1" height="14" fill="var(--cat-mint)"></rect>
+            </svg>
+            <div class="legend">
+              <span class="legend-item"><span class="legend-swatch" style="background:var(--accent);"></span>Bus 78.7%</span>
+              <span class="legend-item"><span class="legend-swatch" style="background:var(--cat-teal);"></span>Tram 9.8%</span>
+              <span class="legend-item"><span class="legend-swatch" style="background:var(--cat-indigo);"></span>Rail 6.3%</span>
+              <span class="legend-item"><span class="legend-swatch" style="background:var(--cat-rose);"></span>Subway 5.1%</span>
+              <span class="legend-item"><span class="legend-swatch" style="background:var(--cat-mint);"></span>Ferry 0.02%</span>
+            </div>
+          </div>
+
+          <div class="block">
+            <div class="block-title">Busiest routes observed so far</div>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>Route</th><th>Mode</th><th class="num">Events</th><th class="num">Mean delay</th></tr></thead>
+                <tbody>
+                  <tr><td><b>U7</b></td><td><span class="cat-dot" style="background:var(--cat-rose);"></span>Subway</td><td class="num">3,441</td><td class="num delta-good">-0.6s</td></tr>
+                  <tr><td><b>Bus 4</b></td><td><span class="cat-dot" style="background:var(--accent);"></span>Bus</td><td class="num">3,339</td><td class="num">52.4s</td></tr>
+                  <tr><td><b>S1</b></td><td><span class="cat-dot" style="background:var(--cat-indigo);"></span>Rail</td><td class="num">3,289</td><td class="num delta-good">-17.8s</td></tr>
+                  <tr><td><b>M10</b></td><td><span class="cat-dot" style="background:var(--cat-teal);"></span>Tram</td><td class="num">3,241</td><td class="num">25.3s</td></tr>
+                  <tr><td><b>Bus 4</b></td><td><span class="cat-dot" style="background:var(--accent);"></span>Bus</td><td class="num">3,207</td><td class="num">55.6s</td></tr>
+                  <tr><td><b>U2</b></td><td><span class="cat-dot" style="background:var(--cat-rose);"></span>Subway</td><td class="num">2,951</td><td class="num">17.0s</td></tr>
+                  <tr><td><b>U1</b></td><td><span class="cat-dot" style="background:var(--cat-rose);"></span>Subway</td><td class="num">2,729</td><td class="num delta-good">-14.0s</td></tr>
+                  <tr><td><b>Bus 32</b></td><td><span class="cat-dot" style="background:var(--accent);"></span>Bus</td><td class="num">2,706</td><td class="num">35.6s</td></tr>
+                  <tr><td><b>S41</b></td><td><span class="cat-dot" style="background:var(--cat-indigo);"></span>Rail</td><td class="num">2,604</td><td class="num delta-good">-26.6s</td></tr>
+                  <tr><td><b>S42</b></td><td><span class="cat-dot" style="background:var(--cat-indigo);"></span>Rail</td><td class="num">2,599</td><td class="num delta-good">-26.0s</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="block">
-        <div class="block-title">Busiest routes observed so far</div>
-        <div class="table-scroll">
-          <table>
-            <thead><tr><th>Route</th><th>Mode</th><th class="num">Events</th><th class="num">Mean delay</th></tr></thead>
-            <tbody>
-              <tr><td><b>U7</b></td><td><span class="cat-dot" style="background:var(--cat-rose);"></span>Subway</td><td class="num">3,441</td><td class="num delta-good">-0.6s</td></tr>
-              <tr><td><b>Bus 4</b></td><td><span class="cat-dot" style="background:var(--cat-teal);"></span>Bus</td><td class="num">3,339</td><td class="num">52.4s</td></tr>
-              <tr><td><b>S1</b></td><td><span class="cat-dot" style="background:var(--cat-indigo);"></span>Rail</td><td class="num">3,289</td><td class="num delta-good">-17.8s</td></tr>
-              <tr><td><b>M10</b></td><td><span class="cat-dot" style="background:var(--cat-amber);"></span>Tram</td><td class="num">3,241</td><td class="num">25.3s</td></tr>
-              <tr><td><b>Bus 4</b></td><td><span class="cat-dot" style="background:var(--cat-teal);"></span>Bus</td><td class="num">3,207</td><td class="num">55.6s</td></tr>
-              <tr><td><b>U2</b></td><td><span class="cat-dot" style="background:var(--cat-rose);"></span>Subway</td><td class="num">2,951</td><td class="num">17.0s</td></tr>
-              <tr><td><b>U1</b></td><td><span class="cat-dot" style="background:var(--cat-rose);"></span>Subway</td><td class="num">2,729</td><td class="num delta-good">-14.0s</td></tr>
-              <tr><td><b>Bus 32</b></td><td><span class="cat-dot" style="background:var(--cat-teal);"></span>Bus</td><td class="num">2,706</td><td class="num">35.6s</td></tr>
-              <tr><td><b>S41</b></td><td><span class="cat-dot" style="background:var(--cat-indigo);"></span>Rail</td><td class="num">2,604</td><td class="num delta-good">-26.6s</td></tr>
-              <tr><td><b>S42</b></td><td><span class="cat-dot" style="background:var(--cat-indigo);"></span>Rail</td><td class="num">2,599</td><td class="num delta-good">-26.0s</td></tr>
-            </tbody>
-          </table>
+      </div>
+    </section>
+
+    <section class="view" id="modelling">
+      <div class="view-title"><h2>03 &middot; Modelling</h2><span class="rule"></span></div>
+      <div class="row-2">
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Model comparison</h3>
+            <div class="panel-note">Test split (1,161,362 rows), delay increment target, never a random split &middot; skill = 1 &minus; MAE&#8320;&#7488;&#7480;&#7480;&#7473; / MAE&#8320;&#7473;&#7477;&#7479;&#7472;&#7481;&#7476;&#7479;</div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Model</th><th class="num">MAE (s)</th><th class="num">PR-AUC &gt;6min</th><th class="num">Skill vs operator</th></tr></thead>
+              <tbody>
+                <tr><td><span class="cat-dot" style="background:var(--good);"></span><b>Operator (benchmark)</b></td><td class="num">7.99</td><td class="num">0.950</td><td class="num dim">&mdash;</td></tr>
+                <tr><td><span class="cat-dot" style="background:var(--accent);"></span>LightGBM</td><td class="num">10.27</td><td class="num">0.916</td><td class="num delta-bad">&minus;28.5%</td></tr>
+                <tr><td><span class="cat-dot" style="background:var(--cat-indigo);"></span>STGNN</td><td class="num">10.87</td><td class="num">0.919</td><td class="num delta-bad">&minus;36.1%</td></tr>
+                <tr><td><span class="cat-dot" style="background:var(--ink-3);"></span>Persistence</td><td class="num">11.21</td><td class="num">0.909</td><td class="num delta-bad">&minus;40.4%</td></tr>
+                <tr><td><span class="cat-dot" style="background:var(--cat-teal);"></span>GRU<sup>*</sup></td><td class="num">11.33</td><td class="num">0.903</td><td class="num delta-bad">&minus;41.9%</td></tr>
+                <tr><td><span class="cat-dot" style="background:var(--cat-rose);"></span>Historical mean</td><td class="num">14.12</td><td class="num">0.909</td><td class="num delta-bad">&minus;76.8%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="block-foot">* GRU scored on a sampled 117,986-row subset (per-trip Python sequence building doesn't scale to the full split in one CPU session), not the full test set the other tiers use.</div>
         </div>
-      </div>
-    </div>
 
-  </section>
-
-  <section class="row-2">
-
-    <div class="panel">
-      <div class="panel-head">
-        <h2>Model comparison</h2>
-        <div class="panel-note">Test split (1,161,362 rows), delay increment target, never a random split &middot; skill = 1 &minus; MAE&#8320;&#7488;&#7480;&#7480;&#7473; / MAE&#8320;&#7473;&#7477;&#7479;&#7472;&#7481;&#7476;&#7479;</div>
-      </div>
-      <div class="table-scroll">
-        <table>
-          <thead><tr><th>Model</th><th class="num">MAE (s)</th><th class="num">PR-AUC &gt;6min</th><th class="num">Skill vs operator</th></tr></thead>
-          <tbody>
-            <tr><td><span class="cat-dot" style="background:var(--good);"></span><b>Operator (benchmark)</b></td><td class="num">7.99</td><td class="num">0.950</td><td class="num dim">&mdash;</td></tr>
-            <tr><td><span class="cat-dot" style="background:var(--cat-teal);"></span>LightGBM</td><td class="num">10.27</td><td class="num">0.916</td><td class="num delta-bad">&minus;28.5%</td></tr>
-            <tr><td><span class="cat-dot" style="background:var(--cat-indigo);"></span>STGNN</td><td class="num">10.87</td><td class="num">0.919</td><td class="num delta-bad">&minus;36.1%</td></tr>
-            <tr><td><span class="cat-dot" style="background:var(--ink-3);"></span>Persistence</td><td class="num">11.21</td><td class="num">0.909</td><td class="num delta-bad">&minus;40.4%</td></tr>
-            <tr><td><span class="cat-dot" style="background:var(--cat-amber);"></span>GRU<sup>*</sup></td><td class="num">11.33</td><td class="num">0.903</td><td class="num delta-bad">&minus;41.9%</td></tr>
-            <tr><td><span class="cat-dot" style="background:var(--cat-rose);"></span>Historical mean</td><td class="num">14.12</td><td class="num">0.909</td><td class="num delta-bad">&minus;76.8%</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="block-foot">* GRU scored on a sampled 117,986-row subset (per-trip Python sequence building doesn't scale to the full split in one CPU session), not the full test set the other tiers use.</div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-head">
-        <h2>Edge-type ablation</h2>
-        <div class="panel-note">STGNN validation MAE with each propagation channel zeroed out &middot; the headline experiment</div>
-      </div>
-      <div class="table-scroll">
-        <table>
-          <thead><tr><th>Configuration</th><th class="num">Val MAE</th><th class="num">&Delta; vs full graph</th></tr></thead>
-          <tbody>
-            <tr><td><b>Full graph</b></td><td class="num">19.295</td><td class="num dim">&mdash;</td></tr>
-            <tr><td>without transfer</td><td class="num">19.295</td><td class="num">+0.000</td></tr>
-            <tr><td>without shared_segment</td><td class="num">19.310</td><td class="num">+0.015</td></tr>
-            <tr><td>no graph (all removed)</td><td class="num">19.344</td><td class="num">+0.049</td></tr>
-            <tr><td class="delta-bad"><b>without sched_adj</b></td><td class="num delta-bad"><b>19.355</b></td><td class="num delta-bad"><b>+0.059</b></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="block-foot">Longitudinal propagation (<code>sched_adj</code>, same trip) dominates. <code>block</code> (vehicle chain) is entirely absent, not just zeroed: <code>vehicle_id</code> is never populated. Transfer/shared-infrastructure show only a small effect at the current 30k-of-264,933-stop graph coverage.</div>
-    </div>
-
-  </section>
-
-  <section class="callout crit-edge">
-    <h2>Diagnosis: why no model beats the operator yet</h2>
-    <ul>
-      <li>Re-slicing the test split by <b>how fresh the operator's own prediction was</b> shows LightGBM already <b>matches or beats the operator</b> outside a narrow "volatile" regime (delay actively changing right now, 2.2% of rows). The entire aggregate gap concentrates there: LightGBM's error is <b>&gt;10x</b> the operator's in that slice alone.</li>
-      <li>Five volatility features engineered from existing TripUpdates history (<code>delay_jump_1</code>, <code>delay_recent_std</code>, <code>delay_vs_route_recent_gap</code>, etc.) were tried and adopted &mdash; a real ~0.5% overall improvement, but only ~0.1% on the volatile regime specifically, confirming the gap there is structural, not a tuning shortfall.</li>
-      <li>A live pull of the primary feed confirmed <b>zero</b> <code>VehiclePosition</code> entities are published, so whatever lets the operator react instantly is internal to the agency's own systems and not exposed here.</li>
-      <li><b>ServiceAlerts collection went live 2026-07-24 21:54 CEST</b> as the next candidate signal (real disruption alerts &mdash; construction, technical problems, police activity &mdash; mixed with boilerplate attribution notices), delta-compressed by <code>alert_id</code>. Not yet tested against the model: history only starts accruing from deployment time forward.</li>
-    </ul>
-  </section>
-
-  <section class="row-2">
-
-    <div class="panel">
-      <div class="panel-head">
-        <h2>Operator vs LightGBM, by horizon</h2>
-        <div class="panel-note">Horizon = scheduled run time to the next stop &middot; bar width relative to the slower of the two</div>
-      </div>
-
-      <div class="cmp-row">
-        <div class="cmp-label"><span>0&ndash;5 min</span><span class="n">n=1,127,989</span></div>
-        <div class="cmp-bar-line"><span>operator</span><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:100%; background: var(--good);"></div></div><span class="cmp-bar-val">7.4s</span></div>
-        <div class="cmp-bar-line"><span>lightgbm</span><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:78%; background: var(--accent);"></div></div><span class="cmp-bar-val">9.5s</span></div>
-      </div>
-      <div class="cmp-row">
-        <div class="cmp-label"><span>5&ndash;15 min</span><span class="n">n=31,804</span></div>
-        <div class="cmp-bar-line"><span>operator</span><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:100%; background: var(--good);"></div></div><span class="cmp-bar-val">25.1s</span></div>
-        <div class="cmp-bar-line"><span>lightgbm</span><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:75%; background: var(--accent);"></div></div><span class="cmp-bar-val">33.5s</span></div>
-      </div>
-      <div class="cmp-row">
-        <div class="cmp-label"><span>15&ndash;30 min</span><span class="n">n=1,290</span></div>
-        <div class="cmp-bar-line"><span>operator</span><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:100%; background: var(--good);"></div></div><span class="cmp-bar-val">51.6s</span></div>
-        <div class="cmp-bar-line"><span>lightgbm</span><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:75%; background: var(--accent);"></div></div><span class="cmp-bar-val">68.5s</span></div>
-      </div>
-      <div class="cmp-row">
-        <div class="cmp-label"><span>30&ndash;60 min</span><span class="n">n=264</span></div>
-        <div class="cmp-bar-line"><span>operator</span><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:100%; background: var(--good);"></div></div><span class="cmp-bar-val">82.1s</span></div>
-        <div class="cmp-bar-line"><span>lightgbm</span><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:78%; background: var(--accent);"></div></div><span class="cmp-bar-val">128.2s</span></div>
-      </div>
-
-      <div class="block-foot">Operator wins every bucket, but the margin is roughly constant (~25&ndash;35%) except the near-zero-sample &ge;60min tail &mdash; consistent with the diagnosis that the gap is concentrated in fast-moving volatility, not horizon length.</div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-head">
-        <h2>LightGBM error by segment</h2>
-        <div class="panel-note">Where the model is already strong vs. where it struggles</div>
-      </div>
-      <div class="table-scroll">
-        <table>
-          <thead><tr><th>Mode</th><th class="num">n</th><th class="num">MAE (s)</th></tr></thead>
-          <tbody>
-            <tr><td><span class="cat-dot" style="background:var(--cat-indigo);"></span>Tram/light rail</td><td class="num">113,313</td><td class="num delta-good">7.07</td></tr>
-            <tr><td><span class="cat-dot" style="background:var(--cat-mint);"></span>Subway</td><td class="num">53,862</td><td class="num delta-good">7.15</td></tr>
-            <tr><td><span class="cat-dot" style="background:var(--cat-teal);"></span>Bus</td><td class="num">921,746</td><td class="num">9.99</td></tr>
-            <tr><td><span class="cat-dot" style="background:var(--warn);"></span>Ferry <span class="dim">(n=36, noisy)</span></td><td class="num">36</td><td class="num delta-bad">20.36</td></tr>
-            <tr><td><span class="cat-dot" style="background:var(--cat-rose);"></span>Regional rail</td><td class="num">72,405</td><td class="num delta-bad">21.15</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="table-scroll">
-        <table>
-          <thead><tr><th>Split</th><th class="num">n</th><th class="num">MAE (s)</th></tr></thead>
-          <tbody>
-            <tr><td>Off-peak</td><td class="num">782,006</td><td class="num delta-bad">14.00</td></tr>
-            <tr><td>Peak (7&ndash;9, 16&ndash;19)</td><td class="num">379,356</td><td class="num delta-good">2.57</td></tr>
-            <tr><td>Rural proxy (low density)</td><td class="num">570,483</td><td class="num delta-good">10.08</td></tr>
-            <tr><td>Urban proxy (high density)</td><td class="num">590,879</td><td class="num">10.45</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="block-foot">Rail (regional and ferry) is the weakest mode &mdash; sparser network features and longer, more volatile trips. Peak-hour delay increments are smaller and more predictable than off-peak, likely because scheduled slack is tighter and more uniform.</div>
-    </div>
-
-  </section>
-
-  <section class="row-2">
-
-    <div class="panel">
-      <div class="panel-head">
-        <h2>ServiceAlerts, live sample</h2>
-        <div class="panel-note">Cause breakdown from the accruing alert lake &middot; most rows are boilerplate attribution, not incidents</div>
-      </div>
-      <div class="meter">
-        <div class="meter-head"><span>Attribution notices (UNKNOWN_CAUSE)</span><span class="val">45,071</span></div>
-        <div class="meter-track"><div class="meter-fill" style="width:99.4%; background: var(--ink-3);"></div></div>
-      </div>
-      <div class="meter">
-        <div class="meter-head"><span>Real disruptions (technical, construction, medical, police, other)</span><span class="val">246</span></div>
-        <div class="meter-track"><div class="meter-fill" style="width:0.6%; background: var(--warn);"></div></div>
-      </div>
-      <div class="block">
-        <div class="block-title">Real disruption examples pulled from the live feed (German originals)</div>
-        <div class="table-scroll">
-          <table>
-            <tbody>
-              <tr><td>Reparatur an einem Signal <span class="dim">(technical)</span></td></tr>
-              <tr><td>Stau / Hohes Verkehrsaufkommen <span class="dim">(traffic)</span></td></tr>
-              <tr><td>Defektes Stellwerk <span class="dim">(technical)</span></td></tr>
-              <tr><td>Kurzfristige Erkrankung von Personal <span class="dim">(medical)</span></td></tr>
-              <tr><td>Tiere auf der Strecke <span class="dim">(other)</span></td></tr>
-            </tbody>
-          </table>
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Edge-type ablation</h3>
+            <div class="panel-note">STGNN validation MAE with each propagation channel zeroed out &middot; the headline experiment</div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Configuration</th><th class="num">Val MAE</th><th class="num">&Delta; vs full graph</th></tr></thead>
+              <tbody>
+                <tr><td><b>Full graph</b></td><td class="num">19.295</td><td class="num dim">&mdash;</td></tr>
+                <tr><td>without transfer</td><td class="num">19.295</td><td class="num">+0.000</td></tr>
+                <tr><td>without shared_segment</td><td class="num">19.310</td><td class="num">+0.015</td></tr>
+                <tr><td>no graph (all removed)</td><td class="num">19.344</td><td class="num">+0.049</td></tr>
+                <tr><td class="delta-bad"><b>without sched_adj</b></td><td class="num delta-bad"><b>19.355</b></td><td class="num delta-bad"><b>+0.059</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="block-foot">Longitudinal propagation (<code>sched_adj</code>, same trip) dominates. <code>block</code> (vehicle chain) is entirely absent, not just zeroed: <code>vehicle_id</code> is never populated. Transfer/shared-infrastructure show only a small effect at the current 30k-of-264,933-stop graph coverage.</div>
         </div>
-      </div>
-      <div class="block-foot">These read like exactly the kind of precursor signal the volatile-delay diagnosis needs, but there isn't enough history yet to test it against the model &mdash; collection only started 2026-07-24 21:54 CEST.</div>
-    </div>
 
-    <div class="panel">
-      <div class="panel-head">
-        <h2>Project roadmap</h2>
-        <div class="panel-note">Where this repository stands against <code>GOAL_transit_delay_propagation.md</code></div>
       </div>
-      <div class="table-scroll">
-        <table>
-          <thead><tr><th>Phase</th><th>Status</th></tr></thead>
-          <tbody>
-            <tr><td>1 &middot; Collection</td><td><span class="tag tag-good">complete</span> 24h21m, 0 restarts</td></tr>
-            <tr><td>2 &middot; Schedule &amp; realisation panel</td><td><span class="tag tag-good">complete</span> 30.9M + 9.09M rows</td></tr>
-            <tr><td>3 &middot; Feature engineering</td><td><span class="tag tag-good">complete</span> leakage-tested, 7.74M rows</td></tr>
-            <tr><td>4 &middot; Models &amp; ablation</td><td><span class="tag tag-good">complete</span> 6 tiers, diagnosis done</td></tr>
-            <tr><td>5 &middot; Econometrics</td><td><span class="tag tag-good">complete</span> SDM, LM tests, local projections</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="block">
-        <div class="block-title">Resources</div>
-        <ul class="link-list">
-          <li><a href="https://github.com/ofurkancoban/transit-delay-propagation">Repository</a> &middot; source, tests, CI</li>
-          <li><a href="https://github.com/ofurkancoban/transit-delay-propagation/blob/main/notebooks/03_model_results.ipynb">03_model_results.ipynb</a> &middot; full comparison + diagnosis</li>
-          <li><a href="https://github.com/ofurkancoban/transit-delay-propagation/blob/main/notebooks/04_econometrics.ipynb">04_econometrics.ipynb</a> &middot; SDM, LM tests, impulse response</li>
-          <li><a href="https://github.com/ofurkancoban/transit-delay-propagation/blob/main/GOAL_transit_delay_propagation.md">Goal spec</a> &middot; acceptance criteria per phase</li>
+    </section>
+
+    <section class="view" id="diagnosis">
+      <div class="view-title"><h2>04 &middot; Diagnosis</h2><span class="rule"></span></div>
+      <div class="callout crit-edge">
+        <h3>Why no model beats the operator yet</h3>
+        <ul>
+          <li>Re-slicing the test split by <b>how fresh the operator's own prediction was</b> shows LightGBM already <b>matches or beats the operator</b> outside a narrow "volatile" regime (delay actively changing right now, 2.2% of rows). The entire aggregate gap concentrates there: LightGBM's error is <b>&gt;10x</b> the operator's in that slice alone.</li>
+          <li>Five volatility features engineered from existing TripUpdates history (<code>delay_jump_1</code>, <code>delay_recent_std</code>, <code>delay_vs_route_recent_gap</code>, etc.) were tried and adopted &mdash; a real ~0.5% overall improvement, but only ~0.1% on the volatile regime specifically, confirming the gap there is structural, not a tuning shortfall.</li>
+          <li>A live pull of the primary feed confirmed <b>zero</b> <code>VehiclePosition</code> entities are published, so whatever lets the operator react instantly is internal to the agency's own systems and not exposed here.</li>
+          <li><b>ServiceAlerts collection went live 2026-07-24 21:54 CEST</b> as the next candidate signal (real disruption alerts &mdash; construction, technical problems, police activity &mdash; mixed with boilerplate attribution notices), delta-compressed by <code>alert_id</code>. Not yet tested against the model: history only starts accruing from deployment time forward.</li>
         </ul>
       </div>
-    </div>
+    </section>
 
-  </section>
+    <section class="view" id="segments">
+      <div class="view-title"><h2>05 &middot; Segments</h2><span class="rule"></span></div>
+      <div class="row-2">
 
-  <section class="callout">
-    <h2>Feed limitations found so far</h2>
-    <ul>
-      <li><b>vehicle_id is never populated</b> on the primary feed (0 of 9.09M realised stop-events, confirmed against the raw protobuf). The vehicle-chain / block propagation channel cannot be estimated from this source.</li>
-      <li><b>direction_id is always the GTFS-RT "unset" sentinel (-1)</b> in realtime, and the static <code>trips.txt</code> omits <code>direction_id</code>/<code>block_id</code> entirely. "Same route and direction" network features reduce to "same route" only, joined via <code>trip_id</code>.</li>
-      <li>Two brief upstream feed-side stalls (2026-07-23 16:05-16:11, 2026-07-24 09:42-09:52) inflated lag_s but never took the collector process down; excluded from the realisation panel per pitfall 6.</li>
-      <li>Both findings are documented in <code>README.md</code> and constrained the edge-type ablation above.</li>
-    </ul>
-  </section>
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Operator vs LightGBM, by horizon</h3>
+            <div class="panel-note">Horizon = scheduled run time to the next stop &middot; bar width relative to the slower of the two</div>
+          </div>
 
-  <footer class="foot">
-    DATA: REALTIME.GTFS.DE (CC BY-SA 4.0) &middot; GTFS.DE STATIC FEED, DELFI E.V. &middot; PHASES 1&ndash;5 COMPLETE, COLLECTION ONGOING &middot; AUTO-REFRESHES EVERY 60S
-  </footer>
+          <div class="cmp-row">
+            <div class="cmp-label"><span>0&ndash;5 min</span><span class="n">n=1,127,989</span></div>
+            <div class="cmp-bar-line"><span>operator</span><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:100%; background: var(--good);"></div></div><span class="cmp-bar-val">7.4s</span></div>
+            <div class="cmp-bar-line"><span>lightgbm</span><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:78%; background: var(--accent);"></div></div><span class="cmp-bar-val">9.5s</span></div>
+          </div>
+          <div class="cmp-row">
+            <div class="cmp-label"><span>5&ndash;15 min</span><span class="n">n=31,804</span></div>
+            <div class="cmp-bar-line"><span>operator</span><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:100%; background: var(--good);"></div></div><span class="cmp-bar-val">25.1s</span></div>
+            <div class="cmp-bar-line"><span>lightgbm</span><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:75%; background: var(--accent);"></div></div><span class="cmp-bar-val">33.5s</span></div>
+          </div>
+          <div class="cmp-row">
+            <div class="cmp-label"><span>15&ndash;30 min</span><span class="n">n=1,290</span></div>
+            <div class="cmp-bar-line"><span>operator</span><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:100%; background: var(--good);"></div></div><span class="cmp-bar-val">51.6s</span></div>
+            <div class="cmp-bar-line"><span>lightgbm</span><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:75%; background: var(--accent);"></div></div><span class="cmp-bar-val">68.5s</span></div>
+          </div>
+          <div class="cmp-row">
+            <div class="cmp-label"><span>30&ndash;60 min</span><span class="n">n=264</span></div>
+            <div class="cmp-bar-line"><span>operator</span><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:100%; background: var(--good);"></div></div><span class="cmp-bar-val">82.1s</span></div>
+            <div class="cmp-bar-line"><span>lightgbm</span><div class="cmp-bar-track"><div class="cmp-bar-fill" style="width:78%; background: var(--accent);"></div></div><span class="cmp-bar-val">128.2s</span></div>
+          </div>
+
+          <div class="block-foot">Operator wins every bucket, but the margin is roughly constant (~25&ndash;35%) except the near-zero-sample &ge;60min tail &mdash; consistent with the diagnosis that the gap is concentrated in fast-moving volatility, not horizon length.</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>LightGBM error by segment</h3>
+            <div class="panel-note">Where the model is already strong vs. where it struggles</div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Mode</th><th class="num">n</th><th class="num">MAE (s)</th></tr></thead>
+              <tbody>
+                <tr><td><span class="cat-dot" style="background:var(--cat-indigo);"></span>Tram/light rail</td><td class="num">113,313</td><td class="num delta-good">7.07</td></tr>
+                <tr><td><span class="cat-dot" style="background:var(--cat-mint);"></span>Subway</td><td class="num">53,862</td><td class="num delta-good">7.15</td></tr>
+                <tr><td><span class="cat-dot" style="background:var(--accent);"></span>Bus</td><td class="num">921,746</td><td class="num">9.99</td></tr>
+                <tr><td><span class="cat-dot" style="background:var(--crit);"></span>Ferry <span class="dim">(n=36, noisy)</span></td><td class="num">36</td><td class="num delta-bad">20.36</td></tr>
+                <tr><td><span class="cat-dot" style="background:var(--cat-rose);"></span>Regional rail</td><td class="num">72,405</td><td class="num delta-bad">21.15</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Split</th><th class="num">n</th><th class="num">MAE (s)</th></tr></thead>
+              <tbody>
+                <tr><td>Off-peak</td><td class="num">782,006</td><td class="num delta-bad">14.00</td></tr>
+                <tr><td>Peak (7&ndash;9, 16&ndash;19)</td><td class="num">379,356</td><td class="num delta-good">2.57</td></tr>
+                <tr><td>Rural proxy (low density)</td><td class="num">570,483</td><td class="num delta-good">10.08</td></tr>
+                <tr><td>Urban proxy (high density)</td><td class="num">590,879</td><td class="num">10.45</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="block-foot">Rail (regional and ferry) is the weakest mode &mdash; sparser network features and longer, more volatile trips. Peak-hour delay increments are smaller and more predictable than off-peak, likely because scheduled slack is tighter and more uniform.</div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="view" id="alerts">
+      <div class="view-title"><h2>06 &middot; Alerts &amp; roadmap</h2><span class="rule"></span></div>
+      <div class="row-2">
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>ServiceAlerts, live sample</h3>
+            <div class="panel-note">Cause breakdown from the accruing alert lake &middot; most rows are boilerplate attribution, not incidents</div>
+          </div>
+          <div class="meter">
+            <div class="meter-head"><span>Attribution notices (UNKNOWN_CAUSE)</span><span class="val">45,071</span></div>
+            <div class="meter-track"><div class="meter-fill" style="width:99.4%; background: var(--ink-3);"></div></div>
+          </div>
+          <div class="meter">
+            <div class="meter-head"><span>Real disruptions (technical, construction, medical, police, other)</span><span class="val">246</span></div>
+            <div class="meter-track"><div class="meter-fill" style="width:0.6%; background: var(--warn);"></div></div>
+          </div>
+          <div class="block">
+            <div class="block-title">Real disruption examples pulled from the live feed (German originals)</div>
+            <div class="table-scroll">
+              <table>
+                <tbody>
+                  <tr><td>Reparatur an einem Signal <span class="dim">(technical)</span></td></tr>
+                  <tr><td>Stau / Hohes Verkehrsaufkommen <span class="dim">(traffic)</span></td></tr>
+                  <tr><td>Defektes Stellwerk <span class="dim">(technical)</span></td></tr>
+                  <tr><td>Kurzfristige Erkrankung von Personal <span class="dim">(medical)</span></td></tr>
+                  <tr><td>Tiere auf der Strecke <span class="dim">(other)</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="block-foot">These read like exactly the kind of precursor signal the volatile-delay diagnosis needs, but there isn't enough history yet to test it against the model &mdash; collection only started 2026-07-24 21:54 CEST.</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Project roadmap</h3>
+            <div class="panel-note">Where this repository stands against <code>GOAL_transit_delay_propagation.md</code></div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Phase</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr><td>1 &middot; Collection</td><td><span class="tag tag-good">complete</span> 24h21m, 0 restarts</td></tr>
+                <tr><td>2 &middot; Schedule &amp; realisation panel</td><td><span class="tag tag-good">complete</span> 30.9M + 9.09M rows</td></tr>
+                <tr><td>3 &middot; Feature engineering</td><td><span class="tag tag-good">complete</span> leakage-tested, 7.74M rows</td></tr>
+                <tr><td>4 &middot; Models &amp; ablation</td><td><span class="tag tag-good">complete</span> 6 tiers, diagnosis done</td></tr>
+                <tr><td>5 &middot; Econometrics</td><td><span class="tag tag-good">complete</span> SDM, LM tests, local projections</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="block">
+            <div class="block-title">Resources</div>
+            <ul class="link-list">
+              <li><a href="https://github.com/ofurkancoban/transit-delay-propagation">Repository</a> &middot; source, tests, CI</li>
+              <li><a href="https://github.com/ofurkancoban/transit-delay-propagation/blob/main/notebooks/03_model_results.ipynb">03_model_results.ipynb</a> &middot; full comparison + diagnosis</li>
+              <li><a href="https://github.com/ofurkancoban/transit-delay-propagation/blob/main/notebooks/04_econometrics.ipynb">04_econometrics.ipynb</a> &middot; SDM, LM tests, impulse response</li>
+              <li><a href="https://github.com/ofurkancoban/transit-delay-propagation/blob/main/GOAL_transit_delay_propagation.md">Goal spec</a> &middot; acceptance criteria per phase</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="view" id="limitations">
+      <div class="view-title"><h2>07 &middot; Feed limits</h2><span class="rule"></span></div>
+      <div class="callout">
+        <h3>Feed limitations found so far</h3>
+        <ul>
+          <li><b>vehicle_id is never populated</b> on the primary feed (0 of 9.09M realised stop-events, confirmed against the raw protobuf). The vehicle-chain / block propagation channel cannot be estimated from this source.</li>
+          <li><b>direction_id is always the GTFS-RT "unset" sentinel (-1)</b> in realtime, and the static <code>trips.txt</code> omits <code>direction_id</code>/<code>block_id</code> entirely. "Same route and direction" network features reduce to "same route" only, joined via <code>trip_id</code>.</li>
+          <li>Two brief upstream feed-side stalls (2026-07-23 16:05-16:11, 2026-07-24 09:42-09:52) inflated lag_s but never took the collector process down; excluded from the realisation panel per pitfall 6.</li>
+          <li>Both findings are documented in <code>README.md</code> and constrained the edge-type ablation above.</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer class="foot">
+      DATA: REALTIME.GTFS.DE (CC BY-SA 4.0) &middot; GTFS.DE STATIC FEED, DELFI E.V. &middot; PHASES 1&ndash;5 COMPLETE, COLLECTION ONGOING &middot; AUTO-REFRESHES EVERY 60S
+    </footer>
+
+  </main>
 
 </div>
 
 <script>
 (function () {
-  var STATUS_COLORS = { good: "#1C8A4B", warn: "#B8790A", crit: "#C4372E" };
+  var STATUS_COLORS = { good: "#2E7D46", warn: "#B4740E", crit: "#B03A2E" };
 
   function fmtAgo(iso) {
     var diffMs = Date.now() - new Date(iso).getTime();
@@ -682,21 +753,21 @@
 
     if (sysd.active === "active" && !statsStale) {
       setStatusColor(STATUS_COLORS.good);
-      text.textContent = "Collector live · systemd active · " + (sysd.restarts || 0) + " restarts";
+      text.textContent = "Collector live · " + (sysd.restarts || 0) + " restarts";
     } else if (statsStale) {
       setStatusColor(STATUS_COLORS.warn);
-      text.textContent = "Stats feed stale (refresh workflow may be delayed)";
+      text.textContent = "Stats feed stale";
     } else {
       setStatusColor(STATUS_COLORS.crit);
-      text.textContent = "Collector not active (systemd: " + sysd.active + ")";
+      text.textContent = "Collector not active (" + sysd.active + ")";
     }
 
-    var bits = ["Live · stats fetched " + statsAge];
+    var bits = ["Live · fetched " + statsAge];
     if (poll.poll) {
-      bits.push("poll #" + poll.poll + " · lag " + poll.lag_s + "s · total rows " + poll.total_written.toLocaleString());
+      bits.push("poll #" + poll.poll + " · lag " + poll.lag_s + "s · rows " + poll.total_written.toLocaleString());
     }
     if (poll.alert_rows_total !== null && poll.alert_rows_total !== undefined) {
-      bits.push("alert rows " + poll.alert_rows_total.toLocaleString());
+      bits.push("alerts " + poll.alert_rows_total.toLocaleString());
     }
     meta.innerHTML = bits.join(" &middot; ");
 
@@ -712,7 +783,7 @@
     var text = document.getElementById("status-text");
     var meta = document.getElementById("top-meta");
     if (text) { setStatusColor(STATUS_COLORS.warn); text.textContent = "Live stats unavailable"; }
-    if (meta) meta.innerHTML = "Could not load stats.json (static snapshot below may be out of date)";
+    if (meta) meta.innerHTML = "Could not load stats.json";
   }
 
   function refresh() {
