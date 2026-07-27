@@ -633,6 +633,46 @@
         </div>
 
       </div>
+
+      <div class="row-2">
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Where LightGBM beats the operator</h3>
+            <div class="panel-note">Skill = 1 &minus; MAE(lightgbm) / MAE(operator), by agency (n &ge; 5,000) &middot; agency name doubles as a practical city/region proxy, since GTFS has no city field</div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Agency</th><th class="num">n</th><th class="num">Skill</th></tr></thead>
+              <tbody>
+                <tr><td><span class="cat-dot" style="background:var(--good);"></span>Regiobus Potsdam Mittelmark</td><td class="num">5,912</td><td class="num delta-good">+0.72</td></tr>
+                <tr><td><span class="cat-dot" style="background:var(--good);"></span>S-Bahn Berlin GmbH</td><td class="num">18,833</td><td class="num delta-good">+0.69</td></tr>
+                <tr><td><span class="cat-dot" style="background:var(--good);"></span>Augsburger Verkehrsgesellschaft</td><td class="num">7,441</td><td class="num delta-good">+0.39</td></tr>
+                <tr><td><span class="cat-dot" style="background:var(--good);"></span>HEAG mobilo (Darmstadt)</td><td class="num">6,285</td><td class="num delta-good">+0.33</td></tr>
+                <tr><td><span class="cat-dot" style="background:var(--good);"></span>Verkehrsverbund Stuttgart</td><td class="num">45,031</td><td class="num delta-good">+0.20</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="block-foot">Beats the operator at real scale, not just small samples &mdash; Stuttgart alone has 45k test rows.</div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h3>Where the operator wins by the widest margin</h3>
+            <div class="panel-note">Same agency-level skill score, worst performers</div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Agency</th><th class="num">n</th><th class="num">Skill</th></tr></thead>
+              <tbody>
+                <tr><td><span class="cat-dot" style="background:var(--crit);"></span>NEW mobil und aktiv (M&ouml;nchengladbach)</td><td class="num">5,318</td><td class="num delta-bad">&minus;1.66</td></tr>
+                <tr><td><span class="cat-dot" style="background:var(--crit);"></span>Stadtverkehr L&uuml;beck</td><td class="num">5,904</td><td class="num delta-bad">&minus;1.23</td></tr>
+                <tr><td><span class="cat-dot" style="background:var(--crit);"></span>Verkehrsverbund Rhein-Neckar</td><td class="num">58,202</td><td class="num delta-bad">&minus;1.19</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="block-foot">Consistent with the freshness diagnosis above: agencies whose live operator system reacts fastest to changing delays keep the widest lead over a static feature-based forecast. A production rollout should pick operator vs. model per agency, not as one global switch.</div>
+        </div>
+      </div>
     </section>
 
     <section class="view" id="alerts">

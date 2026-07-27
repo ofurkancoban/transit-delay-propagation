@@ -103,6 +103,17 @@ calmer 94% of rows (still warming up on a single day) but cannot close
 the volatile-event gap, which is a hard ceiling of `realtime.gtfs.de`
 itself, not something more tuning or feature engineering can reach.
 
+**Breakdown by agency (company/region), `src/models/agency_breakdown.py`:**
+the aggregate "operator wins" result is not uniform across the feed's
+~470 agencies (GTFS has no city field, but the largest agencies are named
+after the region they serve, so agency grouping doubles as a practical
+city proxy). LightGBM beats the operator at real scale in several
+regions, e.g. Verkehrsverbund Stuttgart (n=45,031, skill +0.20) and
+S-Bahn Berlin (n=18,833, skill +0.69), while losing badly in others, e.g.
+Verkehrsverbund Rhein-Neckar (n=58,202, skill -1.19). See
+`notebooks/03_model_results.ipynb` for the full ranking; a production
+rollout should pick operator vs. model per agency rather than globally.
+
 **ServiceAlerts are now collected too** (`src/collect/gtfsrt_collector.py`,
 deployed live to the VPS collector at 2026-07-24 21:54 CEST, confirmed
 running: first poll wrote 34,960 alert rows, the very next poll 30s later
