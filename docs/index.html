@@ -201,6 +201,19 @@
   .delta-bad  { color: var(--crit); font-weight: 700; }
   .dim { color: var(--ink-3); }
 
+  /* ---------- live delay map ---------- */
+  .map-wrap { position: relative; width: 100%; }
+  #delay-map { width: 100%; height: auto; aspect-ratio: 900 / 620; display: block; border-radius: 6px; background: var(--panel-2); border: 1px solid var(--border); cursor: crosshair; }
+  .map-tooltip {
+    position: absolute; pointer-events: none; z-index: 5; max-width: 220px;
+    background: var(--ink); color: var(--bg); font-size: 11.5px; line-height: 1.4;
+    padding: 7px 9px; border-radius: 5px; box-shadow: 0 4px 14px rgba(0,0,0,0.28);
+    transform: translate(-50%, calc(-100% - 10px));
+  }
+  .map-tooltip b { display: block; font-size: 12px; margin-bottom: 2px; }
+  .map-legend { display: flex; gap: 18px; font-size: 11.5px; color: var(--ink-2); margin-top: 10px; }
+  .map-legend span { display: inline-flex; align-items: center; }
+
   .cmp-row { display: flex; flex-direction: column; gap: 6px; padding: 9px 0; border-bottom: 1px solid var(--border); }
   .cmp-row:last-child { border-bottom: none; padding-bottom: 0; }
   .cmp-label { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; font-weight: 600; }
@@ -257,12 +270,13 @@
 
     <div class="rail-nav">
       <a href="#overview"><span class="idx">01</span>Overview</a>
-      <a href="#collection"><span class="idx">02</span>Collection</a>
-      <a href="#modelling"><span class="idx">03</span>Modelling</a>
-      <a href="#diagnosis"><span class="idx">04</span>Diagnosis</a>
-      <a href="#segments"><span class="idx">05</span>Segments</a>
-      <a href="#alerts"><span class="idx">06</span>Alerts &amp; roadmap</a>
-      <a href="#limitations"><span class="idx">07</span>Feed limits</a>
+      <a href="#livemap"><span class="idx">02</span>Live map</a>
+      <a href="#collection"><span class="idx">03</span>Collection</a>
+      <a href="#modelling"><span class="idx">04</span>Modelling</a>
+      <a href="#diagnosis"><span class="idx">05</span>Diagnosis</a>
+      <a href="#segments"><span class="idx">06</span>Segments</a>
+      <a href="#alerts"><span class="idx">07</span>Alerts &amp; roadmap</a>
+      <a href="#limitations"><span class="idx">08</span>Feed limits</a>
     </div>
 
     <div class="rail-status">
@@ -320,8 +334,35 @@
       <div class="panel-note" id="kpi-freshness">Live tiles above (rows, trips, poll rate, lag, delay share, alerts) update from the collector every ~10 minutes. Model MAE is a fixed evaluation result, not a live metric.</div>
     </section>
 
+    <section class="view" id="livemap">
+      <div class="view-title"><h2>02 &middot; Live map</h2><span class="rule"></span></div>
+      <div class="callout">
+        <h3>What this map shows, and what it doesn't</h3>
+        <ul>
+          <li>The primary feed publishes <b>no live vehicle position</b> (confirmed by a direct protobuf pull, see Feed limits below), so there is no GPS dot to animate. What <i>is</i> live: each stop's <b>last reported delay</b> from TripUpdates, plotted at that stop's static coordinate.</li>
+          <li>To keep the JSON this map reads light enough to commit every ~10 minutes indefinitely, it shows only the <b>250 stops with the largest currently-known delay</b> nationwide in the trailing 15-minute window &mdash; not the full network (~130,000 distinct stops report in any given 20-minute window). This is the delay-propagation frontier, not a full live map of the system.</li>
+          <li>Hover a dot for the stop name, trip id, and delay. Dot color/size scale with delay severity.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Worst currently-known delays, by stop</h3>
+          <div class="panel-note" id="map-note">Loading&hellip;</div>
+        </div>
+        <div class="map-wrap">
+          <canvas id="delay-map" width="900" height="620"></canvas>
+          <div class="map-tooltip" id="map-tooltip" hidden></div>
+        </div>
+        <div class="map-legend">
+          <span><span class="cat-dot" style="background:var(--warn);"></span>1&ndash;3 min</span>
+          <span><span class="cat-dot" style="background:var(--accent-strong);"></span>3&ndash;6 min</span>
+          <span><span class="cat-dot" style="background:var(--crit);"></span>6 min+</span>
+        </div>
+      </div>
+    </section>
+
     <section class="view" id="collection">
-      <div class="view-title"><h2>02 &middot; Collection</h2><span class="rule"></span></div>
+      <div class="view-title"><h2>03 &middot; Collection</h2><span class="rule"></span></div>
       <div class="row-2">
 
         <div class="panel">
@@ -507,7 +548,7 @@
     </section>
 
     <section class="view" id="modelling">
-      <div class="view-title"><h2>03 &middot; Modelling</h2><span class="rule"></span></div>
+      <div class="view-title"><h2>04 &middot; Modelling</h2><span class="rule"></span></div>
       <div class="row-2">
 
         <div class="panel">
@@ -555,7 +596,7 @@
     </section>
 
     <section class="view" id="diagnosis">
-      <div class="view-title"><h2>04 &middot; Diagnosis</h2><span class="rule"></span></div>
+      <div class="view-title"><h2>05 &middot; Diagnosis</h2><span class="rule"></span></div>
       <div class="callout crit-edge">
         <h3>Why no model beats the operator yet</h3>
         <ul>
@@ -568,7 +609,7 @@
     </section>
 
     <section class="view" id="segments">
-      <div class="view-title"><h2>05 &middot; Segments</h2><span class="rule"></span></div>
+      <div class="view-title"><h2>06 &middot; Segments</h2><span class="rule"></span></div>
       <div class="row-2">
 
         <div class="panel">
@@ -685,7 +726,7 @@
     </section>
 
     <section class="view" id="alerts">
-      <div class="view-title"><h2>06 &middot; Alerts &amp; roadmap</h2><span class="rule"></span></div>
+      <div class="view-title"><h2>07 &middot; Alerts &amp; roadmap</h2><span class="rule"></span></div>
       <div class="row-2">
 
         <div class="panel">
@@ -750,7 +791,7 @@
     </section>
 
     <section class="view" id="limitations">
-      <div class="view-title"><h2>07 &middot; Feed limits</h2><span class="rule"></span></div>
+      <div class="view-title"><h2>08 &middot; Feed limits</h2><span class="rule"></span></div>
       <div class="callout">
         <h3>Feed limitations found so far</h3>
         <ul>
@@ -871,6 +912,128 @@
 
     var fresh = document.getElementById("kpi-freshness");
     if (fresh) fresh.textContent = "Live tiles above (rows, trips, poll rate, lag, delay share, alerts) last updated " + statsAge + " from the collector. Model MAE is a fixed evaluation result, not a live metric.";
+
+    renderMap(stats.map, statsAge);
+  }
+
+  // ---------- live delay map ----------
+  var GERMANY_BOUNDS = { latMin: 47.2, latMax: 55.1, lonMin: 5.8, lonMax: 15.2 };
+  var CITY_LABELS = [
+    { name: "Hamburg", lat: 53.55, lon: 9.99 },
+    { name: "Berlin", lat: 52.52, lon: 13.405 },
+    { name: "Cologne", lat: 50.937, lon: 6.96 },
+    { name: "Frankfurt", lat: 50.11, lon: 8.682 },
+    { name: "Stuttgart", lat: 48.775, lon: 9.182 },
+    { name: "Munich", lat: 48.137, lon: 11.575 },
+    { name: "Dresden", lat: 51.05, lon: 13.74 }
+  ];
+  var mapPoints = []; // populated on each render, used for hover hit-testing
+
+  function project(lat, lon, w, h) {
+    var b = GERMANY_BOUNDS;
+    var x = ((lon - b.lonMin) / (b.lonMax - b.lonMin)) * w;
+    var y = ((b.latMax - lat) / (b.latMax - b.latMin)) * h;
+    return [x, y];
+  }
+
+  function delayColor(delaySec) {
+    var m = Math.abs(delaySec) / 60;
+    if (m >= 6) return STATUS_COLORS.crit;
+    if (m >= 3) return "#B4740E"; // accent-strong, distinct from the warn tone below
+    return STATUS_COLORS.warn;
+  }
+
+  function renderMap(mapData, statsAge) {
+    var canvas = document.getElementById("delay-map");
+    var note = document.getElementById("map-note");
+    if (!canvas) return;
+
+    if (!mapData || mapData.error || !mapData.stops) {
+      if (note) note.textContent = "Live delay map unavailable this refresh.";
+      return;
+    }
+
+    var w = canvas.width, h = canvas.height;
+    var ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, w, h);
+
+    // graticule (lat/lon reference grid, not a political border)
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue("--grid-line").trim() || "#DEDCCF";
+    ctx.lineWidth = 1;
+    ctx.font = "10px " + (getComputedStyle(document.documentElement).getPropertyValue("--font-mono") || "monospace");
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--ink-3").trim() || "#837D63";
+    for (var lon = 6; lon <= 15; lon += 2) {
+      var p1 = project(GERMANY_BOUNDS.latMin, lon, w, h);
+      var p2 = project(GERMANY_BOUNDS.latMax, lon, w, h);
+      ctx.beginPath(); ctx.moveTo(p1[0], p1[1]); ctx.lineTo(p2[0], p2[1]); ctx.stroke();
+      ctx.fillText(lon + "°E", p1[0] + 3, h - 6);
+    }
+    for (var lat = 48; lat <= 55; lat += 2) {
+      var q1 = project(lat, GERMANY_BOUNDS.lonMin, w, h);
+      var q2 = project(lat, GERMANY_BOUNDS.lonMax, w, h);
+      ctx.beginPath(); ctx.moveTo(q1[0], q1[1]); ctx.lineTo(q2[0], q2[1]); ctx.stroke();
+      ctx.fillText(lat + "°N", 4, q1[1] - 3);
+    }
+
+    // city anchors, for spatial orientation (no basemap tiles under the CSP)
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue("--ink-2").trim() || "#47432E";
+    ctx.font = "11px " + (getComputedStyle(document.documentElement).getPropertyValue("--font-ui") || "sans-serif");
+    CITY_LABELS.forEach(function (c) {
+      var p = project(c.lat, c.lon, w, h);
+      ctx.beginPath(); ctx.arc(p[0], p[1], 2, 0, Math.PI * 2);
+      ctx.fillRect(p[0] - 1, p[1] - 1, 2, 2);
+      ctx.fillText(c.name, p[0] + 6, p[1] + 4);
+    });
+
+    // delay points
+    mapPoints = [];
+    mapData.stops.forEach(function (s) {
+      if (s.lat === null || s.lon === null) return;
+      var p = project(s.lat, s.lon, w, h);
+      var mins = Math.abs(s.delay_s) / 60;
+      var r = Math.min(9, 3 + mins / 2);
+      var color = delayColor(s.delay_s);
+      ctx.beginPath();
+      ctx.arc(p[0], p[1], r, 0, Math.PI * 2);
+      ctx.fillStyle = color + "CC";
+      ctx.fill();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = color;
+      ctx.stroke();
+      mapPoints.push({ x: p[0], y: p[1], r: r + 3, stop: s });
+    });
+
+    if (note) {
+      note.textContent = mapData.stops.length + " stops shown · worst known delays in the trailing " +
+        (mapData.window_minutes || 15) + " minutes · refreshed " + statsAge;
+    }
+  }
+
+  function setupMapTooltip() {
+    var canvas = document.getElementById("delay-map");
+    var tooltip = document.getElementById("map-tooltip");
+    if (!canvas || !tooltip) return;
+
+    canvas.addEventListener("mousemove", function (ev) {
+      var rect = canvas.getBoundingClientRect();
+      var scaleX = canvas.width / rect.width, scaleY = canvas.height / rect.height;
+      var mx = (ev.clientX - rect.left) * scaleX, my = (ev.clientY - rect.top) * scaleY;
+      var hit = null, bestDist = Infinity;
+      for (var i = 0; i < mapPoints.length; i++) {
+        var pt = mapPoints[i];
+        var d = Math.hypot(pt.x - mx, pt.y - my);
+        if (d <= pt.r + 4 && d < bestDist) { bestDist = d; hit = pt; }
+      }
+      if (!hit) { tooltip.hidden = true; return; }
+      var s = hit.stop;
+      var mins = (s.delay_s / 60).toFixed(1);
+      tooltip.innerHTML = "<b>" + (s.stop_name || s.stop_id) + "</b>" +
+        "delay " + mins + " min &middot; trip " + s.trip_id;
+      tooltip.style.left = (hit.x / scaleX) + "px";
+      tooltip.style.top = (hit.y / scaleY) + "px";
+      tooltip.hidden = false;
+    });
+    canvas.addEventListener("mouseleave", function () { tooltip.hidden = true; });
   }
 
   function renderError() {
@@ -887,6 +1050,7 @@
       .catch(renderError);
   }
 
+  setupMapTooltip();
   refresh();
   setInterval(refresh, 60000);
 })();

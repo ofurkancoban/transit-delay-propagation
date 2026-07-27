@@ -23,7 +23,7 @@ import json
 import re
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import duckdb
@@ -32,6 +32,9 @@ REPO_ROOT = Path("/opt/transit-delay-propagation")
 LOG_FILE = REPO_ROOT / "logs" / "collector.log"
 RT_GLOB = str(REPO_ROOT / "data" / "rt" / "**" / "*.parquet")
 ALERTS_GLOB = str(REPO_ROOT / "data" / "rt_alerts" / "**" / "*.parquet")
+STATIC_DIR = REPO_ROOT / "data" / "static"
+MAP_WINDOW_MINUTES = 15
+MAP_MAX_STOPS = 250
 ALERTS_LOG_PATTERN = re.compile(
     r"poll=(\d+) seen=(\d+) written=(\d+) missing_stop_sequence=(\d+) lag_s=(\S+) total_written=(\d+)"
     r"(?: alerts_seen=(\d+) alert_rows_written=(\d+) alert_rows_total=(\d+))?"
@@ -141,12 +144,94 @@ def lake_stats() -> dict:
         return {"error": str(exc)}
 
 
+def latest_static_stops_path() -> Path | None:
+    """Most recently fetched static feed's stops.txt (for stop lat/lon)."""
+    if not STATIC_DIR.exists():
+        return None
+    candidates = sorted((d for d in STATIC_DIR.iterdir() if d.is_dir()), reverse=True)
+    for d in candidates:
+        stops = d / "extracted" / "stops.txt"
+        if stops.exists():
+            return stops
+    return None
+
+
+def recent_rt_globs(now: datetime, window_minutes: int) -> list[str]:
+    """Hour-partition globs covering [now - window_minutes, now], to avoid scanning the full lake."""
+    hours = {now, now - timedelta(minutes=window_minutes)}
+    globs = []
+    for hour_dt in hours:
+        globs.append(
+            str(REPO_ROOT / "data" / "rt" / f"date={hour_dt.strftime('%Y-%m-%d')}" / f"hour={hour_dt.strftime('%H')}" / "*.parquet")
+        )
+    return globs
+
+
+def map_snapshot() -> dict:
+    """Latest known delay per stop, for the live delay map.
+
+    Capped to the MAP_MAX_STOPS worst currently-known delays nationwide,
+    not the full ~264,933-stop network: with no VehiclePosition on this
+    feed (confirmed absent), "live position" is approximated by the last
+    reported delay per stop_id within the trailing window, and the full
+    per-poll stop set (~130k distinct stops in 20 minutes) would make the
+    JSON committed by the refresh workflow every 10 minutes grow without
+    bound over time. Showing the worst delays is also the more useful
+    view for a "delay propagation" map than an unfiltered scatter.
+    """
+    stops_path = latest_static_stops_path()
+    if stops_path is None:
+        return {"error": "no static stops.txt found"}
+
+    now = datetime.now(timezone.utc)
+    globs = recent_rt_globs(now, MAP_WINDOW_MINUTES)
+    cutoff = now - timedelta(minutes=MAP_WINDOW_MINUTES)
+    con = duckdb.connect()
+    try:
+        rows = con.execute(
+            f"""
+            with recent as (
+                select stop_id, trip_id, arrival_delay, poll_ts,
+                    row_number() over (partition by stop_id order by poll_ts desc) as rn
+                from read_parquet({globs!r})
+                where poll_ts >= timestamp '{cutoff.strftime('%Y-%m-%d %H:%M:%S')}'
+                    and arrival_delay is not null
+            )
+            select s.stop_id, s.stop_name, s.stop_lat, s.stop_lon, r.arrival_delay, r.trip_id
+            from recent r
+            join read_csv_auto({str(stops_path)!r}) s using (stop_id)
+            where r.rn = 1
+            order by abs(r.arrival_delay) desc
+            limit {MAP_MAX_STOPS}
+            """
+        ).fetchall()
+    except Exception as exc:
+        return {"error": str(exc)}
+
+    return {
+        "window_minutes": MAP_WINDOW_MINUTES,
+        "max_stops": MAP_MAX_STOPS,
+        "stops": [
+            {
+                "stop_id": r[0],
+                "stop_name": r[1],
+                "lat": r[2],
+                "lon": r[3],
+                "delay_s": r[4],
+                "trip_id": r[5],
+            }
+            for r in rows
+        ],
+    }
+
+
 def main() -> None:
     result = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "systemd": systemctl_status("gtfsrt-collector.service"),
         "log": parse_log(LOG_FILE),
         "lake": lake_stats(),
+        "map": map_snapshot(),
     }
     json.dump(result, sys.stdout)
 

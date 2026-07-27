@@ -18,6 +18,16 @@ without delta compression the same ~50k-entity alert list would be
 rewritten in full on every 30s poll. Written to a separate partitioned
 Parquet lake at data/rt_alerts/date=YYYY-MM-DD/hour=HH/.
 
+Alert.severity_level is captured too: a live feed check found it
+populated on 100% of alerts (INFO/WARNING/SEVERE), and it cleanly
+separates the boilerplate DELFI attribution notices (INFO, ~99.8% of
+alerts) from actual disruption alerts (WARNING/SEVERE, ~0.2%), unlike
+cause/effect which are UNKNOWN_CAUSE/UNKNOWN_EFFECT for the boilerplate
+rows too. StopTimeUpdate.stop_time_properties.assigned_stop_id is also
+captured (rare, ~0.03% of stop time updates): it signals a platform or
+track reassignment away from the scheduled stop, a genuine disruption
+event not otherwise visible in the delay fields alone.
+
 Run as a script:
     python -m src.collect.gtfsrt_collector --feed primary
 """
@@ -79,6 +89,7 @@ ROW_SCHEMA = pa.schema(
         ("departure_delay", pa.int32()),
         ("departure_time", pa.int64()),
         ("stu_schedule_relationship", pa.string()),
+        ("assigned_stop_id", pa.string()),
     ]
 )
 
@@ -98,6 +109,7 @@ ALERT_ROW_SCHEMA = pa.schema(
         ("informed_trip_id", pa.string()),
         ("header_text", pa.string()),
         ("description_text", pa.string()),
+        ("severity_level", pa.string()),
     ]
 )
 
@@ -111,12 +123,12 @@ class PollResult:
 
 
 class DeltaCache:
-    """Tracks the last written (arrival_delay, departure_delay) per (trip_id, stop_sequence)."""
+    """Tracks the last written (arrival_delay, departure_delay, assigned_stop_id) per (trip_id, stop_sequence)."""
 
     def __init__(self) -> None:
-        self._state: dict[tuple[str, int], tuple[Optional[int], Optional[int]]] = {}
+        self._state: dict[tuple[str, int], tuple[Optional[int], Optional[int], Optional[str]]] = {}
 
-    def changed(self, key: tuple[str, int], value: tuple[Optional[int], Optional[int]]) -> bool:
+    def changed(self, key: tuple[str, int], value: tuple[Optional[int], Optional[int], Optional[str]]) -> bool:
         prev = self._state.get(key)
         if prev == value:
             return False
@@ -191,9 +203,14 @@ def extract_rows(feed: gtfs_realtime_pb2.FeedMessage, poll_ts: int, cache: Delta
             arrival_time = stu.arrival.time if stu.HasField("arrival") and stu.arrival.HasField("time") else None
             departure_delay = stu.departure.delay if stu.HasField("departure") and stu.departure.HasField("delay") else None
             departure_time = stu.departure.time if stu.HasField("departure") and stu.departure.HasField("time") else None
+            assigned_stop_id = (
+                stu.stop_time_properties.assigned_stop_id
+                if stu.HasField("stop_time_properties") and stu.stop_time_properties.assigned_stop_id
+                else None
+            )
 
             key = (trip_id, stu.stop_sequence)
-            value = (arrival_delay, departure_delay)
+            value = (arrival_delay, departure_delay, assigned_stop_id)
             if not cache.changed(key, value):
                 continue
 
@@ -214,6 +231,7 @@ def extract_rows(feed: gtfs_realtime_pb2.FeedMessage, poll_ts: int, cache: Delta
                     "departure_delay": departure_delay,
                     "departure_time": departure_time,
                     "stu_schedule_relationship": stu_relationship_name(stu.schedule_relationship),
+                    "assigned_stop_id": assigned_stop_id,
                 }
             )
 
@@ -251,6 +269,7 @@ def write_rows(rows: list[dict], rt_lake_dir: Path, poll_ts: int) -> None:
             "departure_delay": pa.array(columns["departure_delay"], type=pa.int32()),
             "departure_time": pa.array(columns["departure_time"], type=pa.int64()),
             "stu_schedule_relationship": pa.array(columns["stu_schedule_relationship"], type=pa.string()),
+            "assigned_stop_id": pa.array(columns["assigned_stop_id"], type=pa.string()),
         }
     )
 
@@ -270,6 +289,13 @@ def effect_name(effect: int) -> str:
         return gtfs_realtime_pb2.Alert.Effect.Name(effect)
     except ValueError:
         return "UNKNOWN_EFFECT"
+
+
+def severity_level_name(severity_level: int) -> str:
+    try:
+        return gtfs_realtime_pb2.Alert.SeverityLevel.Name(severity_level)
+    except ValueError:
+        return "UNKNOWN_SEVERITY"
 
 
 def translated_text(translated_string, default: Optional[str] = None) -> Optional[str]:
@@ -297,6 +323,7 @@ def extract_alert_rows(
         alert_id = entity.id
         cause = cause_name(alert.cause)
         effect = effect_name(alert.effect)
+        severity_level = severity_level_name(alert.severity_level) if alert.HasField("severity_level") else None
         header_text = translated_text(alert.header_text)
         description_text = translated_text(alert.description_text)
 
@@ -312,6 +339,7 @@ def extract_alert_rows(
         value = (
             cause,
             effect,
+            severity_level,
             active_period_start,
             active_period_end,
             header_text,
@@ -332,6 +360,7 @@ def extract_alert_rows(
                     "alert_id": alert_id,
                     "cause": cause,
                     "effect": effect,
+                    "severity_level": severity_level,
                     "active_period_start": active_period_start,
                     "active_period_end": active_period_end,
                     "informed_agency_id": ie.agency_id if ie else None,
@@ -377,6 +406,7 @@ def write_alert_rows(rows: list[dict], alerts_lake_dir: Path, poll_ts: int) -> N
             "informed_trip_id": pa.array(columns["informed_trip_id"], type=pa.string()),
             "header_text": pa.array(columns["header_text"], type=pa.string()),
             "description_text": pa.array(columns["description_text"], type=pa.string()),
+            "severity_level": pa.array(columns["severity_level"], type=pa.string()),
         }
     )
 

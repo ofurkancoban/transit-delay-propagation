@@ -7,6 +7,7 @@ from src.collect.gtfsrt_collector import (
     effect_name,
     extract_alert_rows,
     extract_rows,
+    severity_level_name,
     translated_text,
 )
 
@@ -109,6 +110,56 @@ def test_cause_and_effect_name_roundtrip():
     assert cause_name(gtfs_realtime_pb2.Alert.Cause.ACCIDENT) == "ACCIDENT"
     assert effect_name(gtfs_realtime_pb2.Alert.Effect.DETOUR) == "DETOUR"
     assert cause_name(99999) == "UNKNOWN_CAUSE"
+
+
+def test_severity_level_name_roundtrip():
+    assert severity_level_name(gtfs_realtime_pb2.Alert.SeverityLevel.WARNING) == "WARNING"
+    assert severity_level_name(gtfs_realtime_pb2.Alert.SeverityLevel.SEVERE) == "SEVERE"
+    assert severity_level_name(99999) == "UNKNOWN_SEVERITY"
+
+
+def test_extract_alert_rows_captures_severity_level():
+    feed = _feed_with_alert("a1", "Delay", gtfs_realtime_pb2.Alert.Effect.SIGNIFICANT_DELAYS, "5")
+    feed.entity[0].alert.severity_level = gtfs_realtime_pb2.Alert.SeverityLevel.SEVERE
+
+    rows, _ = extract_alert_rows(feed, poll_ts=1000, cache=AlertDeltaCache())
+    assert rows[0]["severity_level"] == "SEVERE"
+
+
+def test_alert_delta_cache_writes_when_only_severity_changes():
+    cache = AlertDeltaCache()
+    feed1 = _feed_with_alert("a1", "Delay", gtfs_realtime_pb2.Alert.Effect.SIGNIFICANT_DELAYS, "5")
+    feed1.entity[0].alert.severity_level = gtfs_realtime_pb2.Alert.SeverityLevel.INFO
+    feed2 = _feed_with_alert("a1", "Delay", gtfs_realtime_pb2.Alert.Effect.SIGNIFICANT_DELAYS, "5")
+    feed2.entity[0].alert.severity_level = gtfs_realtime_pb2.Alert.SeverityLevel.SEVERE
+
+    rows1, _ = extract_alert_rows(feed1, poll_ts=1000, cache=cache)
+    rows2, _ = extract_alert_rows(feed2, poll_ts=1030, cache=cache)
+    assert rows1[0]["severity_level"] == "INFO"
+    assert rows2[0]["severity_level"] == "SEVERE"
+
+
+def test_extract_rows_captures_assigned_stop_id():
+    feed = gtfs_realtime_pb2.FeedMessage()
+    feed.header.gtfs_realtime_version = "2.0"
+    tu_entity = feed.entity.add()
+    tu_entity.id = "tu1"
+    tu_entity.trip_update.trip.trip_id = "t1"
+    stu = tu_entity.trip_update.stop_time_update.add()
+    stu.stop_sequence = 2
+    stu.arrival.delay = 30
+    stu.stop_time_properties.assigned_stop_id = "9999"
+
+    rows, seen, missing = extract_rows(feed, poll_ts=1000, cache=DeltaCache())
+    assert rows[0]["assigned_stop_id"] == "9999"
+
+
+def test_delta_cache_writes_when_only_assigned_stop_id_changes():
+    cache = DeltaCache()
+    key = ("t1", 2)
+    assert cache.changed(key, (30, None, None))
+    assert not cache.changed(key, (30, None, None))
+    assert cache.changed(key, (30, None, "9999"))
 
 
 def test_translated_text_prefers_english():
