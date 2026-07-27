@@ -634,11 +634,20 @@
 
       </div>
 
+      <div class="callout">
+        <h3>Why break this down by agency at all</h3>
+        <ul>
+          <li>The headline result above ("operator wins overall, MAE 7.99s vs 10.27s") is an <b>average across all 470 agencies</b> in this nationwide feed. Averages hide the fact that some regions behave very differently from others &mdash; a single global number can't tell you where the model is actually usable.</li>
+          <li>GTFS has no "city" field, but the largest agencies are named after the metro region they run (e.g. <i>Verkehrsverbund Stuttgart</i>, <i>S-Bahn Berlin</i>), so grouping by <code>agency_id</code> doubles as a practical, honest city/region breakdown without inventing a field the data doesn't have.</li>
+          <li><b>The point isn't just descriptive.</b> It answers a concrete operational question: in a real deployment, should a transit app trust the agency's own live prediction, or this model's? The two panels below show that the answer is "it depends where" &mdash; in some regions the model is the better forecast, in most it still isn't. A rollout should switch per agency, not flip one global on/off toggle.</li>
+        </ul>
+      </div>
+
       <div class="row-2">
         <div class="panel">
           <div class="panel-head">
             <h3>Where LightGBM beats the operator</h3>
-            <div class="panel-note">Skill = 1 &minus; MAE(lightgbm) / MAE(operator), by agency (n &ge; 5,000) &middot; agency name doubles as a practical city/region proxy, since GTFS has no city field</div>
+            <div class="panel-note">Skill = 1 &minus; MAE(lightgbm) / MAE(operator), by agency (n &ge; 5,000) &middot; positive means this model's forecast is more accurate than the agency's own live prediction, in that agency</div>
           </div>
           <div class="table-scroll">
             <table>
