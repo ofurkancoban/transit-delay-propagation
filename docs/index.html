@@ -283,28 +283,28 @@
       <div class="kpi-strip">
         <div class="kpi" data-tone="good">
           <div class="kpi-label">Raw snapshot rows</div>
-          <div class="kpi-value">44.4M</div>
-          <div class="kpi-sub">2,859 poll files, full 24h+ window</div>
+          <div class="kpi-value" id="kpi-rows">44.4M</div>
+          <div class="kpi-sub" id="kpi-rows-sub">2,859 poll files, full 24h+ window (2026-07-24 snapshot)</div>
         </div>
         <div class="kpi">
           <div class="kpi-label">Distinct trips seen</div>
-          <div class="kpi-value">504,503</div>
-          <div class="kpi-sub">9.09M stop-events realised</div>
+          <div class="kpi-value" id="kpi-trips">504,503</div>
+          <div class="kpi-sub" id="kpi-trips-sub">9.09M stop-events realised (2026-07-24 snapshot)</div>
         </div>
         <div class="kpi" data-tone="good">
           <div class="kpi-label">Poll success rate</div>
-          <div class="kpi-value">100%</div>
-          <div class="kpi-sub">2,667 polls &middot; 0 errors &middot; 0 restarts</div>
+          <div class="kpi-value" id="kpi-poll-rate">100%</div>
+          <div class="kpi-sub" id="kpi-poll-sub">2,667 polls &middot; 0 errors &middot; 0 restarts</div>
         </div>
         <div class="kpi">
           <div class="kpi-label">Feed lag, p50</div>
-          <div class="kpi-value">3s</div>
-          <div class="kpi-sub">2 upstream stalls (6&amp;10min), no downtime</div>
+          <div class="kpi-value" id="kpi-lag">3s</div>
+          <div class="kpi-sub" id="kpi-lag-sub">2 upstream stalls (6&amp;10min), no downtime</div>
         </div>
         <div class="kpi" data-tone="warn">
           <div class="kpi-label">Delay &gt; 6 min</div>
-          <div class="kpi-value">3.7%</div>
-          <div class="kpi-sub">of 9.09M scored arrivals</div>
+          <div class="kpi-value" id="kpi-delay-share">3.7%</div>
+          <div class="kpi-sub" id="kpi-delay-sub">of scored arrivals (2026-07-24 snapshot)</div>
         </div>
         <div class="kpi">
           <div class="kpi-label">Best model MAE</div>
@@ -317,6 +317,7 @@
           <div class="kpi-sub" id="live-alert-sub">ServiceAlerts collected since deployment</div>
         </div>
       </div>
+      <div class="panel-note" id="kpi-freshness">Live tiles above (rows, trips, poll rate, lag, delay share, alerts) update from the collector every ~10 minutes. Model MAE is a fixed evaluation result, not a live metric.</div>
     </section>
 
     <section class="view" id="collection">
@@ -740,6 +741,18 @@
     dot.style.boxShadow = "0 0 0 3px " + hex + "38";
   }
 
+  function fmtCompact(n) {
+    if (n === null || n === undefined) return null;
+    if (n >= 1e6) return (n / 1e6).toFixed(n >= 1e7 ? 1 : 2) + "M";
+    if (n >= 1e3) return (n / 1e3).toFixed(1) + "k";
+    return String(n);
+  }
+
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el && value !== null && value !== undefined) el.textContent = value;
+  }
+
   function render(stats) {
     var text = document.getElementById("status-text");
     var meta = document.getElementById("top-meta");
@@ -747,6 +760,7 @@
 
     var sysd = stats.systemd || {};
     var log = stats.log || {};
+    var lake = stats.lake || {};
     var poll = log.last_poll || {};
     var statsAge = fmtAgo(stats.generated_at);
     var statsStale = (Date.now() - new Date(stats.generated_at).getTime()) > 20 * 60 * 1000;
@@ -764,19 +778,50 @@
 
     var bits = ["Live · fetched " + statsAge];
     if (poll.poll) {
-      bits.push("poll #" + poll.poll + " · lag " + poll.lag_s + "s · rows " + poll.total_written.toLocaleString());
+      bits.push("poll #" + poll.poll + " · lag " + poll.lag_s + "s");
     }
-    if (poll.alert_rows_total !== null && poll.alert_rows_total !== undefined) {
-      bits.push("alerts " + poll.alert_rows_total.toLocaleString());
+    if (lake.total_rows) {
+      bits.push("lake " + lake.total_rows.toLocaleString() + " rows");
     }
     meta.innerHTML = bits.join(" &middot; ");
 
+    // KPI tiles: authoritative lake scan (see scripts/vps_stats.py), not the
+    // log's per-process counter, which resets on every collector restart.
+    if (lake.total_rows) {
+      setText("kpi-rows", fmtCompact(lake.total_rows));
+      setText("kpi-rows-sub", "live · updated " + statsAge);
+    }
+    if (lake.distinct_trips) {
+      setText("kpi-trips", lake.distinct_trips.toLocaleString());
+      setText("kpi-trips-sub", "live · updated " + statsAge);
+    }
+    if (lake.delay_gt_6min_share !== null && lake.delay_gt_6min_share !== undefined) {
+      setText("kpi-delay-share", (lake.delay_gt_6min_share * 100).toFixed(1) + "%");
+      setText("kpi-delay-sub", "live · updated " + statsAge);
+    }
+    if (log.poll_success_rate !== null && log.poll_success_rate !== undefined) {
+      setText("kpi-poll-rate", (log.poll_success_rate * 100).toFixed(1) + "%");
+      setText(
+        "kpi-poll-sub",
+        (log.poll_count_this_process || 0).toLocaleString() + " polls · " +
+        (log.fail_count_this_process || 0) + " errors this process"
+      );
+    }
+    if (log.lag_p50 !== null && log.lag_p50 !== undefined) {
+      setText("kpi-lag", Math.round(log.lag_p50) + "s");
+      setText("kpi-lag-sub", "p90 " + Math.round(log.lag_p90) + "s · max " + Math.round(log.lag_max) + "s, this process");
+    }
+
     var alertVal = document.getElementById("live-alert-total");
     var alertSub = document.getElementById("live-alert-sub");
-    if (alertVal && poll.alert_rows_total !== null && poll.alert_rows_total !== undefined) {
-      alertVal.textContent = poll.alert_rows_total.toLocaleString();
+    var alertTotal = lake.alert_rows_total_lake !== undefined ? lake.alert_rows_total_lake : poll.alert_rows_total;
+    if (alertVal && alertTotal !== null && alertTotal !== undefined) {
+      alertVal.textContent = alertTotal.toLocaleString();
       if (alertSub) alertSub.textContent = "live · updated " + statsAge;
     }
+
+    var fresh = document.getElementById("kpi-freshness");
+    if (fresh) fresh.textContent = "Live tiles above (rows, trips, poll rate, lag, delay share, alerts) last updated " + statsAge + " from the collector. Model MAE is a fixed evaluation result, not a live metric.";
   }
 
   function renderError() {
